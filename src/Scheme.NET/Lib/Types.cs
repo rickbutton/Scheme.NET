@@ -38,7 +38,28 @@ namespace Scheme.NET.Lib
         {
             LibHelper.EnsureArgCount(args, 1);
             var n = args.First() as NumberAtom;
-            return AtomHelper.BooleanFromBool(args.First().IsNumber() &&  BigRational.Factor(n.Val).Denominator == 1);
+            return AtomHelper.BooleanFromBool(args.First().IsInteger());
+        }
+
+        public static ISExpression IsRational(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 1);
+            var n = args.First() as NumberAtom;
+            return AtomHelper.BooleanFromBool(args.First().IsRational());
+        }
+
+        public static ISExpression IsReal(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 1);
+            var n = args.First() as NumberAtom;
+            return AtomHelper.BooleanFromBool(args.First().IsReal());
+        }
+
+        public static ISExpression IsComplex(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 1);
+            var n = args.First() as NumberAtom;
+            return AtomHelper.BooleanFromBool(args.First().IsComplex());
         }
 
         public static ISExpression IsChar(Scope scope, IEnumerable<ISExpression> args)
@@ -76,7 +97,12 @@ namespace Scheme.NET.Lib
             if (a.IsSymbol() && b.IsSymbol())
                 return AtomHelper.BooleanFromBool(a.Equals(b));
             if (a.IsNumber() && b.IsNumber())
-                return AtomHelper.BooleanFromBool(a.Equals(b));
+            {
+                NumberAtom x = (NumberAtom)a, y = (NumberAtom)b;
+                return AtomHelper.BooleanFromBool(
+                    x.Val.IsExact() == y.Val.IsExact() &&
+                    a.Equals(b));
+            }
             if (a.IsChar() && b.IsChar())
                 return AtomHelper.BooleanFromBool(a.Equals(b));
             if (a.IsNil() && b.IsNil())

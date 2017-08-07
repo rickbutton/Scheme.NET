@@ -24,30 +24,57 @@ namespace Scheme.NET.Tests.ProcedureTests
         {
             TestPredicate("number");
             Assert.AreEqual(AtomHelper.True, Eval("(integer? 3)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(integer? 3.0)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(integer? 3/5)"));
             Assert.AreEqual(AtomHelper.False, Eval("(integer? 3.5)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(integer? 3+3i)"));
+
+            Assert.AreEqual(AtomHelper.True, Eval("(rational? 3)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(rational? 3.0)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(rational? 3/5)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(rational? 3.5)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(real? 3+3i)"));
+
+            Assert.AreEqual(AtomHelper.True, Eval("(real? 3)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(real? 3.0)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(real? 3/5)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(real? 3.5)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(real? 3+3i)"));
+
+            Assert.AreEqual(AtomHelper.True, Eval("(complex? 3)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(complex? 3.0)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(complex? 3/5)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(complex? 3.5)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(complex? 3+3i)"));
 
             Assert.AreEqual(AtomHelper.True, Eval("(zero? 0.0)"));
             Assert.AreEqual(AtomHelper.True, Eval("(zero? 0)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(zero? 0/10)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(zero? 0+0i)"));
             Assert.AreEqual(AtomHelper.False, Eval("(zero? 1)"));
             Assert.AreEqual(AtomHelper.False, Eval("(zero? -1)"));
 
             Assert.AreEqual(AtomHelper.False, Eval("(positive? 0)"));
             Assert.AreEqual(AtomHelper.True, Eval("(positive? 1)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(negative? 1)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(negative? 0)"));
-            Assert.AreEqual(AtomHelper.True, Eval("(negative? -1)"));
             Assert.AreEqual(AtomHelper.False, Eval("(positive? -1)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(positive? 1.1)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(positive? -1.1)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(negative? 0)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(negative? 1)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(negative? -1)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(negative? 1.1)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(negative? -1.1)"));
 
             Assert.AreEqual(AtomHelper.True, Eval("(odd? 1)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(odd? 1.1)"));
+            //Assert.AreEqual(AtomHelper.False, Eval("(odd? 1.1)"));
             Assert.AreEqual(AtomHelper.False, Eval("(odd? 2)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(odd? 2.1)"));
+            //Assert.AreEqual(AtomHelper.False, Eval("(odd? 2.1)"));
             Assert.AreEqual(AtomHelper.False, Eval("(odd? 0)"));
 
             Assert.AreEqual(AtomHelper.True, Eval("(even? 2)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(even? 1.1)"));
+            //Assert.AreEqual(AtomHelper.False, Eval("(even? 1.1)"));
             Assert.AreEqual(AtomHelper.False, Eval("(even? 1)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(even? 2.1)"));
+            //Assert.AreEqual(AtomHelper.False, Eval("(even? 2.1)"));
             Assert.AreEqual(AtomHelper.True, Eval("(even? 0)"));
         }
 

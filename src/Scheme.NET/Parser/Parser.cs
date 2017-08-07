@@ -1,10 +1,10 @@
 ﻿using Scheme.NET.Lexer;
-using Scheme.NET.Numbers;
 using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Scheme.NET.Parser
@@ -93,78 +93,17 @@ namespace Scheme.NET.Parser
                 return AtomHelper.StringFromString(t.Value);
             else if (IsBoolean(t))
                 return AtomHelper.BooleanFromString(t.Value);
+            else if (IsChar(t))
+                return AtomHelper.CharFromString(t.Value);
             else if (IsNumber(t))
                 return AtomHelper.NumberFromString(t.Value);
-            else if (IsChar(t))
-            {
-                return AtomHelper.CharFromString(t.Value);
-            }
             return AtomHelper.SymbolFromString(t.Value);
         }
 
-        private static bool IsNumber(Token t) {
-            if (IsDigits(t.Value))
-                return true;
-
-            if (t.Value.StartsWith("#b"))
-            {
-                if (IsBinary(t.Value.Substring(2)))
-                    return true;
-                else
-                    ThrowError($"Invalid characters in binary number: {t.Value}");
-            }
-
-            if (t.Value.StartsWith("#o"))
-            {
-                if (IsOctal(t.Value.Substring(2)))
-                    return true;
-                else
-                    ThrowError($"Invalid characters in octal number: {t.Value}");
-            }
-
-            if (t.Value.StartsWith("#d"))
-            {
-                if (IsDigits(t.Value.Substring(2)))
-                    return true;
-                else
-                    ThrowError($"Invalid characters in decimal number: {t.Value}");
-            }
-
-            if (t.Value.StartsWith("#x"))
-            {
-                if (IsHex(t.Value.Substring(2)))
-                    return true;
-                else
-                    ThrowError($"Invalid characters in hex number: {t.Value}");
-            }
-
-            return false;
-        }
-        private static bool IsBinary(string s)
+        private static bool IsNumber(Token t)
         {
-            foreach (char c in s)
-                if (c != '0' && c != '1')
-                    return false;
-            return true;
-        }
-
-        private static bool IsOctal(string s)
-        {
-            foreach (char c in s)
-                if (c < '0' || c > '7')
-                    return false;
-            return true;
-        }
-
-        private static bool IsDigits(string s)
-        {
-            BigRational test;
-            return BigRational.TryParse(s, out test);
-        }
-
-        private static bool IsHex(string s)
-        {
-            return s.All("0123456789abcdefABCDEF".Contains);
+            NumberAtom atom;
+            return AtomHelper.TryNumberFromString(t.Value, out atom);
         }
 
         private static bool IsString(Token t) { return t.Type == TokenType.String; }

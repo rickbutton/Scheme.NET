@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Solver.Foundation.3.1.0\lib\Microsoft.Solver.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="MiscUtil, Version=0.2.0.0, Culture=neutral, PublicKeyToken=d3c42c4bfacf7596, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JonSkeet.MiscUtil.0.2.0\lib\net35\MiscUtil.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.7.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -45,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NumberTests\NumberTests.cs" />
+    <Compile Include="ProcedureTests\ConvertTest.cs" />
     <Compile Include="ProcedureTests\EqualTest.cs" />
     <Compile Include="ProcedureTests\EqTest.cs" />
     <Compile Include="ProcedureTests\EqvTest.cs" />

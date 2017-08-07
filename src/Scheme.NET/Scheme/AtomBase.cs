@@ -1,17 +1,16 @@
-﻿using Scheme.NET.Numbers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Scheme.NET.Numbers;
 
 namespace Scheme.NET.Scheme
 {
     public abstract class AtomBase<T> : ISExpression
     {
         public T Val { get; private set; }
-        internal AtomBase(T val) { Val = val; }
+        protected AtomBase(T val) { Val = val; }
 
         public string String() { return Val.ToString(); }
 
@@ -24,9 +23,14 @@ namespace Scheme.NET.Scheme
             }
             return false;
         }
+
+        public override string ToString()
+        {
+            return Val.ToString();
+        }
     }
 
-    public class NumberAtom : AtomBase<BigRational> { internal NumberAtom(BigRational val) : base(val) { } }
+    public class NumberAtom : AtomBase<Complex> { internal NumberAtom(Complex val) : base(val) { } }
     public class BooleanAtom : AtomBase<bool> { internal BooleanAtom(bool val) : base(val) { } }
     public class SymbolAtom : AtomBase<string> { internal SymbolAtom(string val) : base(val) { } }
     public class StringAtom : AtomBase<string> { internal StringAtom(string val) : base(val) { } }

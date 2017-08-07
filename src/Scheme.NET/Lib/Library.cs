@@ -37,15 +37,21 @@ namespace Scheme.NET.Lib
             AddFunction(dict, "truncate", Arithmetic.Truncate);
             AddFunction(dict, "round", Arithmetic.Round);
 
+            AddFunction(dict, "number->string", Convert.NumberToString);
+
             AddFunction(dict, "boolean?", Types.IsBoolean);
             AddFunction(dict, "pair?", Types.IsPair);
             AddFunction(dict, "symbol?", Types.IsSymbol);
-            AddFunction(dict, "number?", Types.IsNumber);
-            AddFunction(dict, "integer?", Types.IsInteger);
             AddFunction(dict, "char?", Types.IsChar);
             AddFunction(dict, "string?", Types.IsString);
             AddFunction(dict, "procedure?", Types.IsProcedure);
             AddFunction(dict, "null?", Types.IsNil);
+
+            AddFunction(dict, "number?", Types.IsNumber);
+            AddFunction(dict, "complex?", Types.IsComplex);
+            AddFunction(dict, "real?", Types.IsReal);
+            AddFunction(dict, "rational?", Types.IsRational);
+            AddFunction(dict, "integer?", Types.IsInteger);
 
             AddFunction(dict, "zero?", Arithmetic.Zero);
             AddFunction(dict, "positive?", Arithmetic.Positive);

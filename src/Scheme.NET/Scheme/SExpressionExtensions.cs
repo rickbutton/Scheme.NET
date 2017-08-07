@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scheme.NET.Numbers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,13 @@ namespace Scheme.NET.Scheme
         public static bool IsProcedure(this ISExpression sexpr) { return sexpr is Procedure; }
         public static bool IsCons(this ISExpression sexpr) { return sexpr is Cons; }
         public static bool IsNil(this ISExpression sexpr) { return sexpr is NilAtom; }
+
+        public static bool IsComplex(this ISExpression sexpr) { return IsNumber(sexpr); }
+        public static bool IsReal(this ISExpression sexpr) { return IsComplex(sexpr) && ((NumberAtom)(sexpr)).Val.ImaginaryIsZero; }
+        public static bool IsRational(this ISExpression sexpr) { return IsReal(sexpr) && ((NumberAtom)(sexpr)).IsReal(); }
+        public static bool IsInteger(this ISExpression sexpr) { return IsRational(sexpr) && 
+                (((NumberAtom)(sexpr)).Val == NumberTower.ExactInteger(0) ||
+                ((NumberAtom)(sexpr)).Val.IsInteger()); }
 
         public static bool IsList(this ISExpression sexpr)
         {

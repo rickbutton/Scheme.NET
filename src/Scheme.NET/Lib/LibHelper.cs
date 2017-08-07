@@ -1,10 +1,11 @@
-﻿using Scheme.NET.Numbers;
-using Scheme.NET.Scheme;
+﻿using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scheme.NET.Numbers;
+using Microsoft.SolverFoundation.Common;
 
 namespace Scheme.NET.Lib
 {
@@ -22,16 +23,47 @@ namespace Scheme.NET.Lib
                 ArgError("argument count must be at least " + c);
         }
 
+        public static void EnsureMaxArgCount(IEnumerable<ISExpression> args, int c)
+        {
+            if (args.Count() > c)
+                ArgError("argument count must be equal to or less than " + c);
+        }
+
         public static void EnsureAllNumber(IEnumerable<ISExpression> args)
         {
             if (args.Any(a => !a.IsNumber()))
                 ArgError("all arguments must be numbers");
         }
 
+        public static void EnsureAllExact(IEnumerable<ISExpression> args)
+        {
+            EnsureAllNumber(args);
+            if (args.Any(a => !((NumberAtom) a).Val.IsExact()))
+                ArgError("all arguments must be exact");
+        }
+
         public static void EnsureAllInteger(IEnumerable<ISExpression> args)
         {
-            if (args.Any(a => !a.IsNumber() && BigRational.Factor((a as NumberAtom).Val).Denominator == 1))
+            if (args.Any(a => !a.IsInteger()))
                 ArgError("all arguments must be integers");
+        }
+
+        public static void EnsureAllRational(IEnumerable<ISExpression> args)
+        {
+            if (args.Any(a => !a.IsRational()))
+                ArgError("all arguments must be rationals");
+        }
+
+        public static void EnsureAllReal(IEnumerable<ISExpression> args)
+        {
+            if (args.Any(a => !a.IsReal()))
+                ArgError("all arguments must be reals");
+        }
+
+        public static void EnsureAllComplex(IEnumerable<ISExpression> args)
+        {
+            if (args.Any(a => !a.IsComplex()))
+                ArgError("all arguments must be complex numbers");
         }
 
         public static void EnsureAllCons(IEnumerable<ISExpression> args)
@@ -46,7 +78,7 @@ namespace Scheme.NET.Lib
                 ArgError($"argument {i} must be cons");
         }
 
-        private static void ArgError(string msg)
+        public static void ArgError(string msg)
         {
             throw new InvalidOperationException($"Argument error: {msg}");
         }

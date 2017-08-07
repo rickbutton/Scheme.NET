@@ -35,9 +35,17 @@ namespace Scheme.NET.Tests.ProcedureTests
         [Test]
         public void TestNumber()
         {
-            Assert.AreEqual(AtomHelper.True, Eval("(equal? 1 1)"));
-            Assert.AreEqual(AtomHelper.True, Eval("(equal? 0 0)"));
-            Assert.AreEqual(AtomHelper.False, Eval("(equal? 1 2)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(eqv? 1 1)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(eqv? 0 0)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1 2)"));
+
+            Assert.AreEqual(AtomHelper.True, Eval("(eqv? 1.1 1.1)"));
+
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 1.2)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 2.1)"));
+
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 1)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.0 1)"));
         }
 
         [Test]

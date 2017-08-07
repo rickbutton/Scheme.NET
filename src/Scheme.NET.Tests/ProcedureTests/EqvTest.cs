@@ -38,6 +38,14 @@ namespace Scheme.NET.Tests.ProcedureTests
             Assert.AreEqual(AtomHelper.True, Eval("(eqv? 1 1)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eqv? 0 0)"));
             Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1 2)"));
+
+            Assert.AreEqual(AtomHelper.True, Eval("(eqv? 1.1 1.1)"));
+
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 1.2)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 2.1)"));
+
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.1 1)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(eqv? 1.0 1)"));
         }
 
         [Test]
