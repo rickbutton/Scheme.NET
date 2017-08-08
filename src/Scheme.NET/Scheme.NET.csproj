@@ -58,6 +58,7 @@
     <Compile Include="Lib\Types.cs" />
     <Compile Include="Numbers\BigIntegerExtensions.cs" />
     <Compile Include="Numbers\Complex.cs" />
+    <Compile Include="Numbers\ComplexPart.cs" />
     <Compile Include="Numbers\RationalExtensions.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,5 +1,4 @@
-﻿using Rationals;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -10,14 +9,14 @@ namespace Scheme.NET.Numbers
 {
     public class Complex : IComparable<Complex>, IEquatable<Complex>
     {
-        public Rational Real { get; }
-        public Rational Imag { get; }
+        public ComplexPart Real { get; }
+        public ComplexPart Imag { get; }
         public bool IsExact { get; private set; }
 
         public bool IsZero => Real.IsZero && Imag.IsZero;
         public bool IsInteger => Real.IsInteger() && Imag.IsInteger();
 
-        public Complex(Rational real, Rational imag, bool isExact)
+        public Complex(ComplexPart real, ComplexPart imag, bool isExact)
         {
             Real = real;
             Imag = imag;
@@ -35,7 +34,7 @@ namespace Scheme.NET.Numbers
         }
         public static Complex operator /(Complex x, Complex y) {
             PromoteExactness(x, y, out x, out y);
-            Rational divisor = (y.Real * y.Real) + (y.Imag * y.Imag);
+            ComplexPart divisor = (y.Real * y.Real) + (y.Imag * y.Imag);
             var newReal = ((x.Real * y.Real) + (x.Imag * y.Imag)) / divisor;
             var newImag = ((x.Imag * y.Real) - (x.Real * y.Imag)) / divisor;
             return new Complex(newReal, newImag, x.IsExact);
@@ -81,26 +80,26 @@ namespace Scheme.NET.Numbers
         public Complex RealGCD(Complex b) { return DoRealBinary(this, b, (x, y) => x.GCD(y)); }
         public Complex RealModulo(Complex b) { return DoRealBinary(this, b, (x, y) => x.Modulo(y)); }
 
-        private static Complex DoRealUnary(Complex a, Func<Rational, Rational> func)
+        private static Complex DoRealUnary(Complex a, Func<ComplexPart, ComplexPart> func)
         {
             if (!a.Imag.IsZero)
                 throw new InvalidOperationException();
             return new Complex(func(a.Real), a.Imag, a.IsExact);
         }
 
-        private static Complex DoRealBinary(Complex a, Complex b, Func<Rational, Rational, Rational> func)
+        private static Complex DoRealBinary(Complex a, Complex b, Func<ComplexPart, ComplexPart, ComplexPart> func)
         {
             if (!a.Imag.IsZero)
                 throw new InvalidOperationException();
-            return new Complex(func(a.Real, b.Real), 0, a.IsExact);
+            return new Complex(func(a.Real, b.Real), ComplexPart.Zero, a.IsExact);
         }
 
-        private static Complex DoUnary(Complex a, Func<Rational, Rational> func)
+        private static Complex DoUnary(Complex a, Func<ComplexPart, ComplexPart> func)
         {
             return new Complex(func(a.Real), func(a.Imag), a.IsExact);
         }
 
-        private static Complex DoBinary(Complex a, Complex b, Func<Rational, Rational, Rational> func)
+        private static Complex DoBinary(Complex a, Complex b, Func<ComplexPart, ComplexPart, ComplexPart> func)
         {
             PromoteExactness(a, b, out a, out b);
             return new Complex(func(a.Real, b.Real), func(a.Imag, b.Imag), a.IsExact);
@@ -162,10 +161,10 @@ namespace Scheme.NET.Numbers
             return new Complex(Real, Imag, false);
         }
 
-        public static Complex CreateExactReal(Rational a) { return new Complex(a, 0, true); }
-        public static Complex CreateExact(Rational a, Rational b) { return new Complex(a, b, true); }
-        public static Complex CreateInexactReal(double a) { return new Complex((Rational)a, 0, false); }
-        public static Complex CreateInExact(Rational a, Rational b) { return new Complex(a, b, false); }
+        public static Complex CreateExactReal(BigInteger a) { return new Complex(new ComplexPart(a), ComplexPart.Zero, true); }
+        public static Complex CreateExact(ComplexPart a, ComplexPart b) { return new Complex(a, b, true); }
+        public static Complex CreateInexactReal(double a) { return new Complex(ComplexPart.CreateFromDouble(a), ComplexPart.Zero, false); }
+        public static Complex CreateInExact(ComplexPart a, ComplexPart b) { return new Complex(a, b, false); }
 
         public override int GetHashCode()
         {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Scheme.NET.Numbers
 {
-    public static class RationalExtensions
+    internal static class RationalExtensions
     {
         public static Rational Abs(this Rational p)
         {

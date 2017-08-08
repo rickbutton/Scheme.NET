@@ -7,7 +7,6 @@ using Scheme.NET.Numbers;
 using System.Text.RegularExpressions;
 using System.Numerics;
 using Complex = Scheme.NET.Numbers.Complex;
-using Rationals;
 
 namespace Scheme.NET.Scheme
 {
@@ -109,7 +108,7 @@ namespace Scheme.NET.Scheme
             else if (prefixes.Contains("#d")) radix = 10;
             else if (prefixes.Contains("#x")) radix = 16;
 
-            Rational rr, ri;
+            ComplexPart rr, ri;
             var success = ParseComplexPart(realSign, realTop, realDiv, realBot, radix, out rr);
             if (!success) { result = null; return false; }
 
@@ -123,34 +122,34 @@ namespace Scheme.NET.Scheme
             return true;
         }
 
-        private static bool ParseComplexPart(string sign, string top, string div, string bot, int radix, out Rational r)
+        private static bool ParseComplexPart(string sign, string top, string div, string bot, int radix, out ComplexPart r)
         {
             var isign = sign == "+" ? 1 : -1;
             if (div == "/" && bot == "0")
             {
-                r = 0;
+                r = ComplexPart.Zero;
                 return false;
             }
 
-            Rational result;
+            ComplexPart result;
             if (div == "/")
             {
                 BigInteger t, b;
                 var success = BigIntegerHelpers.TryParse(top, radix, out t);
-                if (!success) { r = 0; return false; }
+                if (!success) { r = ComplexPart.Zero; return false; }
 
                 success = BigIntegerHelpers.TryParse(bot, radix, out b);
-                if (!success) { r = 0; return false; }
+                if (!success) { r = ComplexPart.Zero; return false; }
 
-                result = new Rational(t, b);
+                result = new ComplexPart(t, b);
             }
             else
             {
                 BigInteger n;
                 var success = BigIntegerHelpers.TryParse(top + bot, radix, out n);
-                if (!success) { r = 0; return false; }
+                if (!success) { r = ComplexPart.Zero; return false; }
 
-                Rational factor = Rational.Pow(radix, -bot.Length);
+                ComplexPart factor = ComplexPart.Pow(ComplexPart.CreateFromBigInteger(radix), -bot.Length);
                 result = n * factor;
             }
             r = result * isign;

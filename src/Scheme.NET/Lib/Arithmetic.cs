@@ -65,14 +65,14 @@ namespace Scheme.NET.Lib
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive());
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive);
         }
 
         public static ISExpression Negative(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative());
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative);
         }
 
         public static ISExpression Odd(Scope scope, IEnumerable<ISExpression> args)
@@ -82,7 +82,7 @@ namespace Scheme.NET.Lib
 
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.IsOdd());
+            return AtomHelper.BooleanFromBool(n.IsOdd);
         }
 
         public static ISExpression Even(Scope scope, IEnumerable<ISExpression> args)
@@ -92,7 +92,7 @@ namespace Scheme.NET.Lib
 
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.IsEven() || n.IsZero);
+            return AtomHelper.BooleanFromBool(n.IsEven || n.IsZero);
         }
 
         public static ISExpression Min(Scope scope, IEnumerable<ISExpression> args)
