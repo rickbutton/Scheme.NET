@@ -11,14 +11,7 @@ namespace Scheme.NET.Lib
 {
     public static class Convert
     {
-
-        private static readonly Complex[] ValidRadix = new Complex[] 
-        {
-            NumberTower.ExactInteger(2),
-            NumberTower.ExactInteger(8),
-            NumberTower.ExactInteger(10),
-            NumberTower.ExactInteger(16),
-        };
+        private static readonly int[] ValidRadix = new int[] { 2,8,10,16 };
 
         public static ISExpression NumberToString(Scope scope, IEnumerable<ISExpression> args)
         {
@@ -26,11 +19,11 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureMaxArgCount(args, 2);
             LibHelper.EnsureAllNumber(args);
 
-            Complex radix = NumberTower.ExactInteger(10);
+            int radix = 10;
             if (args.Count() > 1)
             {
                 var radixArg = (NumberAtom)args.ToArray()[1];
-                radix = radixArg.Val;
+                radix = (int)((double)radixArg.Val.ExactToInexact().Real.BackingValue);
             }
 
             if (!ValidRadix.Contains(radix))
@@ -38,11 +31,9 @@ namespace Scheme.NET.Lib
                 LibHelper.ArgError("Invalid radix specified");
             }
 
-            var iRadix = (int)radix.AsInexact().Real;
-
             var val = args.ToArray()[0] as NumberAtom;
 
-            return AtomHelper.StringFromString(val.Val.ToString(iRadix));
+            return AtomHelper.StringFromString(val.Val.ToString(radix));
         }
     }
 }

@@ -100,7 +100,7 @@ namespace Scheme.NET.Lib
             {
                 NumberAtom x = (NumberAtom)a, y = (NumberAtom)b;
                 return AtomHelper.BooleanFromBool(
-                    x.Val.IsExact() == y.Val.IsExact() &&
+                    x.Val.IsExact == y.Val.IsExact &&
                     a.Equals(b));
             }
             if (a.IsChar() && b.IsChar())

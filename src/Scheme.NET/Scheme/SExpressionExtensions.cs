@@ -19,11 +19,14 @@ namespace Scheme.NET.Scheme
         public static bool IsNil(this ISExpression sexpr) { return sexpr is NilAtom; }
 
         public static bool IsComplex(this ISExpression sexpr) { return IsNumber(sexpr); }
-        public static bool IsReal(this ISExpression sexpr) { return IsComplex(sexpr) && ((NumberAtom)(sexpr)).Val.ImaginaryIsZero; }
+        public static bool IsReal(this ISExpression sexpr) { return IsComplex(sexpr) && ((NumberAtom)(sexpr)).Val.Imag.IsZero; }
         public static bool IsRational(this ISExpression sexpr) { return IsReal(sexpr) && ((NumberAtom)(sexpr)).IsReal(); }
-        public static bool IsInteger(this ISExpression sexpr) { return IsRational(sexpr) && 
-                (((NumberAtom)(sexpr)).Val == NumberTower.ExactInteger(0) ||
-                ((NumberAtom)(sexpr)).Val.IsInteger()); }
+        public static bool IsInteger(this ISExpression sexpr)
+        {
+            var c = (sexpr as NumberAtom)?.Val;
+            return IsRational(sexpr) &&
+                (c == Complex.FromInteger(0) || c.IsInteger);
+        }
 
         public static bool IsList(this ISExpression sexpr)
         {

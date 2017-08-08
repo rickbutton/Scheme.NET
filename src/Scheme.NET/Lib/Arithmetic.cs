@@ -45,7 +45,7 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureMinArgCount(args, 1);
 
             if (args.Count() == 1)
-                return AtomHelper.NumberFromComplex(1.ToComplex() / (args.First() as NumberAtom).Val);
+                return AtomHelper.NumberFromComplex(Complex.FromInteger(1) / (args.First() as NumberAtom).Val);
 
             var v = (args.First() as NumberAtom).Val;
 
@@ -66,14 +66,14 @@ namespace Scheme.NET.Lib
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.RealIsPositive);
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive);
         }
 
         public static ISExpression Negative(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.RealIsNegative);
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative);
         }
 
         public static ISExpression Odd(Scope scope, IEnumerable<ISExpression> args)
@@ -81,9 +81,9 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureAllInteger(args);
             LibHelper.EnsureArgCount(args, 1);
 
-            var n = args.Cast<NumberAtom>().First().Val.AsExact().Real;
+            var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.Modulo(2) != 0);
+            return AtomHelper.BooleanFromBool(n.IsOdd);
         }
 
         public static ISExpression Even(Scope scope, IEnumerable<ISExpression> args)
@@ -91,9 +91,9 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureAllInteger(args);
             LibHelper.EnsureArgCount(args, 1);
 
-            var n = args.Cast<NumberAtom>().First().Val.AsExact().Real;
+            var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.Modulo(2) == 0);
+            return AtomHelper.BooleanFromBool(n.IsEven || n.IsZero);
         }
 
         public static ISExpression Min(Scope scope, IEnumerable<ISExpression> args)
@@ -101,10 +101,7 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureMinArgCount(args, 2);
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
-            return AtomHelper.NumberFromComplex(
-                NumberExtensions.ToComplex(
-                nums.Min(a => 
-                a.PromoteRelative(nums).Real)));
+            return AtomHelper.NumberFromComplex(nums.Min());
         }
 
         public static ISExpression Max(Scope scope, IEnumerable<ISExpression> args)
@@ -112,17 +109,14 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureMinArgCount(args, 2);
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
-            return AtomHelper.NumberFromComplex(
-                NumberExtensions.ToComplex(
-                nums.Max(a => 
-                a.PromoteRelative(nums).Real)));
+            return AtomHelper.NumberFromComplex(nums.Max());
         }
 
         public static ISExpression Abs(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.Abs());
+            return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealAbs());
         }
 
         public static ISExpression Quotient(Scope scope, IEnumerable<ISExpression> args)
@@ -171,9 +165,9 @@ namespace Scheme.NET.Lib
             if (!args.Any())
                 return AtomHelper.NumberFromComplex(0);
 
-            var nums = args.Cast<NumberAtom>().Select(a => a.Val.AsExact().Real.Numerator).ToArray();
+            var nums = args.Cast<NumberAtom>().Select(a => a.Val).ToArray();
 
-            return AtomHelper.NumberFromComplex(GCD(nums).AbsoluteValue);
+            return AtomHelper.NumberFromComplex(GCD(nums).RealAbs());
         }
 
         public static ISExpression Lcm(Scope scope, IEnumerable<ISExpression> args)
@@ -182,8 +176,8 @@ namespace Scheme.NET.Lib
             if (args.Count() == 0)
                 return AtomHelper.NumberFromComplex(1);
 
-            var nums = args.Cast<NumberAtom>().Select(a => a.Val.AsExact().Real.Numerator).ToArray();
-            return AtomHelper.NumberFromComplex(LCM(nums).AbsoluteValue);
+            var nums = args.Cast<NumberAtom>().Select(a => a.Val).ToArray();
+            return AtomHelper.NumberFromComplex(LCM(nums).RealAbs());
         }
 
         public static ISExpression Floor(Scope scope, IEnumerable<ISExpression> args)
@@ -214,24 +208,19 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealRound());
         }
 
-        private static BigInteger GCD(BigInteger[] numbers)
+        private static Complex GCD(Complex[] numbers)
         {
-            return numbers.Aggregate(GCD);
+            return numbers.Aggregate((a, b) => a.RealGCD(b));
         }
 
-        private static BigInteger GCD(BigInteger a, BigInteger b)
+        private static Complex LCM(Complex[] numbers)
         {
-            return b == 0 ? a : GCD(b, a % b);
-        }
-
-        private static BigInteger LCM(BigInteger[] numbers)
-        {
-            return numbers.Aggregate((a, b) => (a * b) / GCD(a, b));
+            return numbers.Aggregate((a, b) => (a * b) / a.RealGCD(b));
         }
 
         private static NumberAtom Sum(this IEnumerable<NumberAtom> ee)
         {
-            Complex sum = new Complex<Rational>(0, 0);
+            Complex sum = Complex.FromInteger(0);
             foreach (var e in ee)
                 sum = sum + e.Val;
 
@@ -240,7 +229,7 @@ namespace Scheme.NET.Lib
 
         private static NumberAtom Multiply(this IEnumerable<NumberAtom> ee)
         {
-            Complex m = new Complex<Rational>(1, 0);
+            Complex m = Complex.FromInteger(1);
             foreach (var e in ee)
                 m = m * e.Val;
 

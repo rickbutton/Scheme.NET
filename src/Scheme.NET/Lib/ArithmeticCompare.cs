@@ -56,28 +56,28 @@ namespace Scheme.NET.Lib
         {
             var baseList = list.Cast<NumberAtom>().Select(a => a.Val);
             return baseList.Zip(baseList
-                     .Skip(1), (a, b) => a.RealCompare(b) < 0).All(b => b);
+                     .Skip(1), (a, b) => a.CompareTo(b) < 0).All(b => b);
         }
 
         private static bool IsIncreasingOrEqualMontonically(this IEnumerable<ISExpression> list)
         {
             var baseList = list.Cast<NumberAtom>().Select(a => a.Val);
             return baseList.Zip(baseList
-                     .Skip(1), (a, b) => a.RealCompare(b) <= 0).All(b => b);
+                     .Skip(1), (a, b) => a.CompareTo(b) <= 0).All(b => b);
         }
 
         private static bool IsDecreasingMontonically(this IEnumerable<ISExpression> list)
         {
             var baseList = list.Cast<NumberAtom>().Select(a => a.Val);
             return baseList.Zip(baseList
-                     .Skip(1), (a, b) => a.RealCompare(b) > 0).All(b => b);
+                     .Skip(1), (a, b) => a.CompareTo(b) > 0).All(b => b);
         }
 
         private static bool IsDecreasingOrEqualMontonically(this IEnumerable<ISExpression> list)
         {
             var baseList = list.Cast<NumberAtom>().Select(a => a.Val);
             return baseList.Zip(baseList
-                     .Skip(1), (a, b) => a.RealCompare(b) >= 0).All(b => b);
+                     .Skip(1), (a, b) => a.CompareTo(b) >= 0).All(b => b);
         }
     }
 }

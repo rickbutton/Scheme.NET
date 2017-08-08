@@ -1,4 +1,4 @@
-﻿using MiscUtil;
+﻿using Microsoft.SolverFoundation.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,310 +7,223 @@ using System.Threading.Tasks;
 
 namespace Scheme.NET.Numbers
 {
-    public abstract class Complex
+    public class Complex : IComparable<Complex>, IEquatable<Complex>
     {
-        private readonly object real, imaginary;
-        public object Real { get { return real; } }
-        public object Imaginary { get { return imaginary; } }
+        public IComplexPart Real { get; }
+        public IComplexPart Imag { get; }
+        public bool IsExact { get; private set; }
 
-        protected Complex(object real, object imaginary)
+        public bool IsZero => Real.IsZero && Imag.IsZero;
+        public bool IsInteger => Real.IsInteger && Imag.IsInteger;
+
+        private Complex(IComplexPart real, IComplexPart imag, bool isExact)
         {
-            if (real.GetType() != imaginary.GetType())
-                throw new ArgumentException("Can't create complex with two different types");
-
-            this.real = real;
-            this.imaginary = imaginary;
+            Real = real;
+            Imag = imag;
+            IsExact = isExact;
         }
 
-        public Complex<T> As<T>() where T : IEquatable<T>
+        public Complex(RationalPart real, RationalPart imag)
         {
-            return new Complex<T>((T)Real, (T)Imaginary);
+            Real = real;
+            Imag = imag;
+            IsExact = true;
         }
 
-        public Type PartType => Real.GetType();
-
-        public abstract Complex Add(Complex y);
-        public static Complex operator +(Complex x, Complex y) { return x.Add(y); }
-
-        public abstract Complex Subtract(Complex y);
-        public static Complex operator -(Complex x, Complex y) { return x.Subtract(y); }
-
-        public abstract Complex Negate();
-        public static Complex operator -(Complex x) { return x.Negate(); }
-
-        public static bool operator ==(Complex x, Complex y)
+        public Complex(DoublePart real, DoublePart imag)
         {
-            if (((object)x) == null && ((object)y) == null) return true;
-            else if (((object)x) == null) return false;
-            return x.Equals(y);
+            Real = real;
+            Imag = imag;
+            IsExact = false;
         }
 
-        public static bool operator !=(Complex x, Complex y)
-        {
-            if (x == null && y == null) return true;
-            else if (x == null) return false;
-            return !x.Equals(y);
+        public static Complex operator +(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x.Add(y)); }
+        public static Complex operator -(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x.Sub(y)); }
+        public static Complex operator -(Complex a) { return DoUnary(a, (x) => x.Negate()); }
+        public static Complex operator *(Complex x, Complex y) {
+            PromoteExactness(x, y, out x, out y);
+            var newReal = x.Real.Mul(y.Real).Sub(y.Imag.Mul(y.Imag));
+            var newImag = x.Real.Mul(y.Imag).Add(x.Imag.Mul(y.Real));
+            return new Complex(newReal, newImag, x.IsExact);
+        }
+        public static Complex operator /(Complex x, Complex y) {
+            PromoteExactness(x, y, out x, out y);
+            IComplexPart divisor = y.Real.Mul(y.Real).Add(y.Imag.Mul(y.Imag));
+            var newReal = x.Real.Mul(y.Real).Add(x.Imag.Mul(y.Imag)).Div(divisor);
+            var newImag = x.Imag.Mul(y.Real).Sub(x.Real.Mul(y.Imag)).Div(divisor);
+            return new Complex(newReal, newImag, x.IsExact);
         }
 
-        public abstract Complex Multiply(Complex y);
-        public static Complex operator *(Complex x, Complex y)
+        public string ToString(int radix)
         {
-            return x.Multiply(y);
-        }
+            string real = Real.ToString(radix);
+            string imag = Imag.ToString(radix, true);
 
-        public abstract Complex Divide(Complex y);
-        public static Complex operator /(Complex x, Complex y)
-        {
-            return x.Divide(y);
-        }
-
-        public abstract bool RealIsZero { get; }
-        public abstract bool RealIsPositive { get; }
-        public abstract bool RealIsNegative { get; }
-        public abstract bool ImaginaryIsZero { get; }
-        public abstract bool ImaginaryIsPositive { get; }
-        public abstract bool ImaginaryIsNegative { get; }
-        public abstract bool IsZero { get; }
-
-        public abstract Complex Abs();
-    }
-
-    public class Complex<T> : Complex, IEquatable<Complex<T>> where T : IEquatable<T>
-    {
-
-        public Complex(T real, T imaginary) : base (real, imaginary)
-        {
-        }
-
-        public T Real { get { return (T)((Complex)this).Real; } }
-        public T Imaginary { get { return (T)((Complex)this).Imaginary; } }
-
-        public T RelativeLength()
-        {
-            return Complex<T>.SquareLength(this);
-        }
-
-        public override bool RealIsZero => Real.Equals(Operator<T>.Zero);
-        public override bool RealIsPositive => Operator<T>.GreaterThan(Real, Operator<T>.Zero);
-        public override bool RealIsNegative => Operator<T>.LessThan(Real, Operator<T>.Zero);
-        public override bool ImaginaryIsZero => Imaginary.Equals(Operator<T>.Zero);
-        public override bool ImaginaryIsPositive => Operator<T>.GreaterThan(Imaginary, Operator<T>.Zero);
-        public override bool ImaginaryIsNegative => Operator<T>.LessThan(Imaginary, Operator<T>.Zero);
-        public override bool IsZero => (Real.Equals(Operator<T>.Zero)) && (Imaginary.Equals(Operator<T>.Zero));
-
-        public override Complex Abs()
-        {
-            if (!ImaginaryIsZero)
-                throw new InvalidOperationException("finding abs of complex number with non-zero i is unsupported");
-
-            if (Operator<T>.LessThan(Real, Operator<T>.Zero))
-                return new Complex<T>(Operator<T>.Negate(Real), Operator<T>.Zero);
-            return this;
+            if (!Imag.IsZero)
+            {
+                return $"{real}{imag}i";
+            }
+            return real;
         }
 
         public override string ToString()
         {
-            if (Imaginary.Equals(Operator<T>.Zero))
+            return ToString(10);
+        }
+
+        public Complex RealAbs()
+        {
+            if (!Imag.IsZero)
+                throw new InvalidOperationException();
+            return new Complex(Real.Abs(), Imag, IsExact);
+        }
+
+        public Complex RealFloor() { return DoRealUnary(this, (x) => x.Floor()); }
+        public Complex RealCeiling() { return DoRealUnary(this, (x) => x.Ceiling()); }
+        public Complex RealTruncate() { return DoRealUnary(this, (x) => x.Truncate()); }
+        public Complex RealRound() { return DoRealUnary(this, (x) => x.Round()); }
+        public Complex RealGCD(Complex b) { return DoRealBinary(this, b, (x, y) => x.GCD(y)); }
+        public Complex RealModulo(Complex b) { return DoRealBinary(this, b, (x, y) => x.Modulo(y)); }
+
+        private static Complex DoRealUnary(Complex a, Func<IComplexPart, IComplexPart> func)
+        {
+            if (!a.Imag.IsZero)
+                throw new InvalidOperationException();
+            return new Complex(func(a.Real), a.Imag, a.IsExact);
+        }
+
+        private static Complex DoRealBinary(Complex a, Complex b, Func<IComplexPart, IComplexPart, IComplexPart> func)
+        {
+            if (!a.Imag.IsZero)
+                throw new InvalidOperationException();
+            return new Complex(func(a.Real, b.Real), RationalPart.FromInteger(0), a.IsExact);
+        }
+
+        private static Complex DoUnary(Complex a, Func<IComplexPart, IComplexPart> func)
+        {
+            return new Complex(func(a.Real), func(a.Imag), a.IsExact);
+        }
+
+        private static Complex DoBinary(Complex a, Complex b, Func<IComplexPart, IComplexPart, IComplexPart> func)
+        {
+            PromoteExactness(a, b, out a, out b);
+            return new Complex(func(a.Real, b.Real), func(a.Imag, b.Imag), a.IsExact);
+        }
+
+        public int CompareTo(Complex b)
+        {
+            if (!Imag.IsZero)
+                throw new InvalidOperationException();
+            var a = this;
+            PromoteExactness(a, b, out a, out b);
+            return a.Real.CompareTo(b.Real);
+        }
+
+        public Complex PromoteRelative(Complex to)
+        {
+            var a = this;
+            PromoteExactness(a, to, out a, out to);
+            return a;
+        }
+
+        public Complex PromoteRelative(IEnumerable<Complex> tos)
+        {
+            var a = this;
+            foreach (var b in tos)
             {
-                return Real.ToString();
+                var to = b;
+                PromoteExactness(a, to, out a, out to);
             }
-            return $"{Real}+{Imaginary}i";
+            return a;
         }
 
-        public override bool Equals(object obj)
+        public static void PromoteExactness(Complex a, Complex b, out Complex outA, out Complex outB)
         {
-            if (obj != null && obj is Complex)
+            if (!a.IsExact || !b.IsExact)
             {
-                Complex other = (Complex)obj;
-                return Equals(this, other);
+                if (a.IsExact)
+                    outA = a.ExactToInexact();
+                else
+                    outA = a;
+
+                if (b.IsExact)
+                    outB = b.ExactToInexact();
+                else
+                    outB = b;
             }
-            return base.Equals(obj);
-        }
-
-        public bool Equals(Complex<T> other)
-        {
-            return Equals(this, other);
-        }
-
-        private static bool Equals(Complex<T> x, Complex<T> y)
-        {
-            return EqualityComparer<T>.Default.Equals(x.Real, y.Real)
-                && EqualityComparer<T>.Default.Equals(x.Imaginary, y.Imaginary);
-        }
-
-        private static bool Equals(Complex x, Complex y)
-        {
-            x = x.PromoteRelative(y);
-            y = y.PromoteRelative(x);
-            return x.Real.Equals(y.Real) && x.Imaginary.Equals(y.Imaginary);
-        }
-
-        private void EnsureSameType(Complex c)
-        {
-            if (c.PartType != PartType)
+            else
             {
-                throw new InvalidOperationException(
-                    "Attempted to perform binary operation with disjoint Complex types");
+                outA = a;
+                outB = b;
             }
         }
 
-        public override Complex Add(Complex y)
+        public Complex ExactToInexact()
         {
-            EnsureSameType(y);
-            return this + y.As<T>();
+            if (!this.IsExact)
+                throw new InvalidOperationException();
+
+            var real = this.Real as RationalPart;
+            var imag = this.Imag as RationalPart;
+
+            return new Complex(
+                new DoublePart(real.Rational.GetSignedDouble()),
+                new DoublePart(imag.Rational.GetSignedDouble()));
         }
 
-        public static Complex<T> operator +(Complex<T> x, Complex<T> y)
+        public static Complex FromRationals(Rational a, Rational b)
         {
-            return new Complex<T>(
-                Operator.Add(x.Real, y.Real),
-                Operator.Add(x.Imaginary, y.Imaginary)
-            );
+            return new Complex(RationalPart.FromRational(a), RationalPart.FromRational(b));
         }
 
-        public static Complex<T> operator +(Complex<T> x, T y)
+        public static Complex FromDoubles(double a, double b)
         {
-            return new Complex<T>(
-                Operator.Add(x.Real, y),
-                x.Imaginary
-            );
+            return new Complex(DoublePart.FromDouble(a), DoublePart.FromDouble(b));
         }
 
-        public override Complex Subtract(Complex y)
+        public static Complex FromInteger(BigInteger i)
         {
-            EnsureSameType(y);
-            return this - y.As<T>();
+            return new Complex(RationalPart.FromInteger(i), RationalPart.FromInteger(0));
         }
 
-        public static Complex<T> operator -(Complex<T> x, Complex<T> y)
+        public static Complex FromDouble(double d)
         {
-            return new Complex<T>(
-                Operator.Subtract(x.Real, y.Real),
-                Operator.Subtract(x.Imaginary, y.Imaginary)
-            );
-        }
-
-        public static Complex<T> operator -(Complex<T> x, T y)
-        {
-            return new Complex<T>(
-                Operator.Subtract(x.Real, y),
-                x.Imaginary
-            );
-        }
-
-        public override Complex Negate()
-        {
-            return -this;
-        }
-
-        public static Complex<T> operator -(Complex<T> x)
-        {
-            return new Complex<T>(
-                Operator.Negate(x.Real),
-                Operator.Negate(x.Imaginary)
-            );
-        }
-
-        public static bool operator ==(Complex<T> x, Complex<T> y)
-        {
-            return Equals(x, y);
-        }
-
-        public static bool operator !=(Complex<T> x, Complex<T> y)
-        {
-            return !Equals(x, y);
-        }
-
-        public override Complex Multiply(Complex y)
-        {
-            EnsureSameType(y);
-            return this * y.As<T>();
-        }
-
-        public static Complex<T> operator *(Complex<T> x, Complex<T> y)
-        {
-            return new Complex<T>(
-                Operator.Subtract(
-                    Operator.Multiply(x.Real, y.Real),
-                    Operator.Multiply(y.Imaginary, y.Imaginary)
-                ), Operator.Add(
-                    Operator.Multiply(x.Real, y.Imaginary),
-                    Operator.Multiply(x.Imaginary, y.Real)
-                )
-            );
-        }
-
-        public static Complex<T> operator *(Complex<T> x, T y)
-        {
-            return new Complex<T>(
-                Operator.Multiply(x.Real, y),
-                Operator.Multiply(x.Imaginary, y)
-            );
-        }
-
-        public static Complex<T> operator *(Complex<T> x, int y)
-        {
-            return new Complex<T>(
-                Operator.MultiplyAlternative(x.Real, y),
-                Operator.MultiplyAlternative(x.Imaginary, y)
-            );
-        }
-
-        private static T SquareLength(Complex<T> value)
-        {
-            return Operator.Add(
-                Operator.Multiply(value.Real, value.Real),
-                Operator.Multiply(value.Imaginary, value.Imaginary)
-            );
-        }
-
-        public override Complex Divide(Complex y)
-        {
-            EnsureSameType(y);
-            return this / y.As<T>();
-        }
-
-        public static Complex<T> operator /(Complex<T> x, Complex<T> y)
-        {
-            T divisor = SquareLength(y),
-              real = Operator.Divide(
-                    Operator.Add(
-                        Operator.Multiply(x.Real, y.Real),
-                        Operator.Multiply(x.Imaginary, y.Imaginary)
-                    ), divisor),
-              imaginary = Operator.Divide(
-                    Operator.Subtract(
-                        Operator.Multiply(x.Imaginary, y.Real),
-                        Operator.Multiply(x.Real, y.Imaginary)
-                    ), divisor);
-            return new Complex<T>(real, imaginary);
-        }
-
-        public static Complex<T> operator /(Complex<T> x, T y)
-        {
-            return new Complex<T>(
-                Operator.Divide(x.Real, y),
-                Operator.Divide(x.Imaginary, y)
-            );
-        }
-
-        public static Complex<T> operator /(Complex<T> x, int y)
-        {
-            return new Complex<T>(
-                Operator.DivideInt32(x.Real, y),
-                Operator.DivideInt32(x.Imaginary, y)
-            );
-        }
-
-        public static implicit operator Complex<T>(T real)
-        {
-            return new Complex<T>(real, Operator<T>.Zero);
+            return new Complex(DoublePart.FromDouble(d), DoublePart.FromDouble(0));
         }
 
         public override int GetHashCode()
         {
-            return (Real == null ? 0 : 17 * Real.GetHashCode())
-                 + (Imaginary == null ? 0 : Imaginary.GetHashCode());
+            return Real.GetHashCode() ^ Imag.GetHashCode();
+        }
+
+        public static bool operator ==(Complex a, Complex b)
+        {
+            if (((object)a) == null && ((object)b) == null) return true;
+            else if (((object)a) == null) return false;
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Complex a, Complex b)
+        {
+            if (((object)a) == null && ((object)b) == null) return false;
+            else if (((object)a) == null) return false;
+            return !a.Equals(b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj is Complex) return this.Equals((Complex)obj);
+            return false;
+        }
+
+        public bool Equals(Complex b)
+        {
+            if (((object)b) == null) return false;
+
+            var a = this;
+            PromoteExactness(a, b, out a, out b);
+            return a.Real.Equals(b.Real) && a.Imag.Equals(b.Imag);
         }
     }
 }

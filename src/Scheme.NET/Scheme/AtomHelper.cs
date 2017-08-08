@@ -27,7 +27,7 @@ namespace Scheme.NET.Scheme
 
         public static NumberAtom NumberFromComplex(BigInteger val)
         {
-            return new NumberAtom(new Complex<Rational>(val, Rational.Zero));
+            return new NumberAtom(Complex.FromInteger(val));
         }
 
         public static NumberAtom NumberFromString(string str)
@@ -116,9 +116,9 @@ namespace Scheme.NET.Scheme
             if (!success) { result = null; return false; }
 
             if (exactness.Value)
-                result = NumberFromComplex(new Complex<Rational>(rr, ri));
+                result = NumberFromComplex(Complex.FromRationals(rr, ri));
             else
-                result = NumberFromComplex(new Complex<double>(ir, ii));
+                result = NumberFromComplex(Complex.FromDoubles(ir, ii));
             return true;
         }
 
@@ -136,10 +136,10 @@ namespace Scheme.NET.Scheme
             if (div == "/")
             {
                 BigInteger t, b;
-                var success = NumberExtensions.Convert(top, radix, out t);
+                var success = BigIntegerHelpers.TryParse(top, radix, out t);
                 if (!success) { r = 0; d = 0; return false; }
 
-                success = NumberExtensions.Convert(bot, radix, out b);
+                success = BigIntegerHelpers.TryParse(bot, radix, out b);
                 if (!success) { r = 0; d = 0; return false; }
 
                 result = Rational.Get(t, b);
@@ -147,7 +147,7 @@ namespace Scheme.NET.Scheme
             else
             {
                 BigInteger n;
-                var success = NumberExtensions.Convert(top + bot, radix, out n);
+                var success = BigIntegerHelpers.TryParse(top + bot, radix, out n);
                 if (!success) { r = 0; d = 0; return false; }
 
                 Rational factor;

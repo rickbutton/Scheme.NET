@@ -38,7 +38,7 @@ namespace Scheme.NET.Lib
         public static void EnsureAllExact(IEnumerable<ISExpression> args)
         {
             EnsureAllNumber(args);
-            if (args.Any(a => !((NumberAtom) a).Val.IsExact()))
+            if (args.Any(a => !((NumberAtom) a).Val.IsExact))
                 ArgError("all arguments must be exact");
         }
 
