@@ -22,7 +22,7 @@ namespace Scheme.NET.Lib
             if (args.Count() > 1)
             {
                 var radixArg = (NumberAtom)args.ToArray()[1];
-                radix = (int)((double)radixArg.Val.ExactToInexact().Real.BackingValue);
+                radix = (int)radixArg.Val.Real;
             }
 
             if (!ValidRadix.Contains(radix))

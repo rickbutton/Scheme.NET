@@ -29,7 +29,7 @@ namespace Scheme.NET.Scheme
 
         public static NumberAtom NumberFromComplex(BigInteger val)
         {
-            return new NumberAtom(Complex.FromInteger(val));
+            return new NumberAtom(Complex.CreateExactReal(val));
         }
 
         public static NumberAtom NumberFromString(string str)
@@ -110,27 +110,25 @@ namespace Scheme.NET.Scheme
             else if (prefixes.Contains("#x")) radix = 16;
 
             Rational rr, ri;
-            double ir, ii;
-            var success = ParseComplexPart(realSign, realTop, realDiv, realBot, exactness.Value, radix, out rr, out ir);
+            var success = ParseComplexPart(realSign, realTop, realDiv, realBot, radix, out rr);
             if (!success) { result = null; return false; }
 
-            success = ParseComplexPart(imagSign, imagTop, imagDiv, imagBot, exactness.Value, radix, out ri, out ii);
+            success = ParseComplexPart(imagSign, imagTop, imagDiv, imagBot, radix, out ri);
             if (!success) { result = null; return false; }
 
             if (exactness.Value)
-                result = NumberFromComplex(Complex.FromRationals(rr, ri));
+                result = NumberFromComplex(Complex.CreateExact(rr, ri));
             else
-                result = NumberFromComplex(Complex.FromDoubles(ir, ii));
+                result = NumberFromComplex(Complex.CreateInExact(rr, ri));
             return true;
         }
 
-        private static bool ParseComplexPart(string sign, string top, string div, string bot, bool exactness, int radix, out Rational r, out double d)
+        private static bool ParseComplexPart(string sign, string top, string div, string bot, int radix, out Rational r)
         {
             var isign = sign == "+" ? 1 : -1;
             if (div == "/" && bot == "0")
             {
                 r = 0;
-                d = 0;
                 return false;
             }
 
@@ -139,10 +137,10 @@ namespace Scheme.NET.Scheme
             {
                 BigInteger t, b;
                 var success = BigIntegerHelpers.TryParse(top, radix, out t);
-                if (!success) { r = 0; d = 0; return false; }
+                if (!success) { r = 0; return false; }
 
                 success = BigIntegerHelpers.TryParse(bot, radix, out b);
-                if (!success) { r = 0; d = 0; return false; }
+                if (!success) { r = 0; return false; }
 
                 result = new Rational(t, b);
             }
@@ -150,20 +148,12 @@ namespace Scheme.NET.Scheme
             {
                 BigInteger n;
                 var success = BigIntegerHelpers.TryParse(top + bot, radix, out n);
-                if (!success) { r = 0; d = 0; return false; }
+                if (!success) { r = 0; return false; }
 
                 Rational factor = Rational.Pow(radix, -bot.Length);
                 result = n * factor;
             }
-            if (exactness)
-            {
-                r = result * isign;
-                d = 0;
-            } else
-            {
-                r = 0;
-                d = ((double)result) * isign;
-            }
+            r = result * isign;
             return true;
         }
 

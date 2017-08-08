@@ -25,24 +25,24 @@ namespace Scheme.NET.Tests.NumberTests
         [Test]
         public void TestPromoteE()
         {
-            Complex a = Complex.FromInteger(1);
-            Complex b = Complex.FromInteger(1);
+            Complex a = Complex.CreateExactReal(1);
+            Complex b = Complex.CreateExactReal(1);
             TestPromote(a, true, true, b, true, true);
         }
 
         [Test]
         public void TestPromoteI()
         {
-            Complex a = Complex.FromDouble(1);
-            Complex b = Complex.FromDouble(1);
+            Complex a = Complex.CreateInexactReal(1);
+            Complex b = Complex.CreateInexactReal(1);
             TestPromote(a, false, false, b, false, false);
         }
 
         [Test]
         public void TestPromoteEI()
         {
-            Complex a = Complex.FromInteger(1);
-            Complex b = Complex.FromDouble(1.0);
+            Complex a = Complex.CreateExactReal(1);
+            Complex b = Complex.CreateInexactReal(1.0);
 
             TestPromote(a, true, false, b, false, false);
             TestPromote(b, false, false, a, true, false);
@@ -55,8 +55,8 @@ namespace Scheme.NET.Tests.NumberTests
 
             var complexes = ints
                 .Select(i => i == 1 ? 
-                    (Complex)Complex.FromInteger(i) : 
-                    (Complex)Complex.FromDouble(i)).ToList();
+                    (Complex)Complex.CreateExactReal(i) : 
+                    (Complex)Complex.CreateInexactReal(i)).ToList();
 
             Assert.AreEqual(2, complexes.Count(c => !c.IsExact));
             complexes = complexes.Select(c => c.PromoteRelative(complexes)).ToList();

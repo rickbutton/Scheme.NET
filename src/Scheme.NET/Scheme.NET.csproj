@@ -58,11 +58,7 @@
     <Compile Include="Lib\Types.cs" />
     <Compile Include="Numbers\BigIntegerExtensions.cs" />
     <Compile Include="Numbers\Complex.cs" />
-    <Compile Include="Numbers\DoublePart.cs" />
-    <Compile Include="Numbers\IComplexPart.cs" />
-    <Compile Include="Numbers\PartBase.cs" />
     <Compile Include="Numbers\RationalExtensions.cs" />
-    <Compile Include="Numbers\RationalPart.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheme\AtomHelper.cs" />

@@ -21,10 +21,9 @@ namespace Scheme.NET.Numbers
             return result;
         }
 
-        public static bool IsInteger(this Rational r)
-        {
-            return r.Denominator == 1;
-        }
+        public static bool IsInteger(this Rational r) { return r.FractionPart == 0; }
+        public static bool IsPositive(this Rational r) { return r > 0; }
+        public static bool IsNegative(this Rational r) { return r < 0; }
 
         public static bool IsEven(this Rational r)
         {
@@ -63,10 +62,30 @@ namespace Scheme.NET.Numbers
             else
             {
                 var a = r.GetIntegralPart().Numerator;
-                var b = r.GetIntegralPart() + 1;
+                var b = r.GetIntegralPart() + (r.GetIntegralPart() >= 0 ? 1 : -1);
                 if (a % 2 == 0) return a;
                 return b;
             }
+        }
+
+        public static Rational GCD(this Rational a, Rational b)
+        {
+            if (!a.IsInteger() || !b.IsInteger())
+                throw new InvalidOperationException();
+
+            Func<Rational, Rational, Rational> func = null;
+            func = (x, y) => y == 0 ? x : func(y, x.Numerator % y.Numerator);
+            return func(a, b);
+        }
+
+        public static Rational Modulo(this Rational a, Rational b)
+        {
+            if (a.Denominator == 0)
+                return 0;
+            if (a.Denominator != 1 || b.Denominator != 1)
+                throw new InvalidOperationException("Can't perform modulo of non-integers.");
+
+            return a.Numerator % b.Numerator;
         }
 
         public static Rational Truncate(this Rational r)
@@ -89,6 +108,43 @@ namespace Scheme.NET.Numbers
 
             if (r > 0) return r.GetIntegralPart() + 1;
             return r.GetIntegralPart();
+        }
+
+        public static string ToString(this Rational r, int radix, bool forceSign = false)
+        {
+            var sign = r.Sign > 0 ? (forceSign ? "+" : "") : "-";
+
+            if (r.IsZero) return "0";
+            if (r.Denominator == 1)
+            {
+                return $"{sign}{BigInteger.Abs(r.Numerator).ToString(radix)}";
+            }
+            return $"{sign}{BigInteger.Abs(r.Numerator).ToString(radix)}/{BigInteger.Abs(r.Denominator).ToString(radix)}";
+        }
+
+        public static string ToDecimalString(this Rational r, int radix, bool forceSign = false)
+        {
+            var d = (decimal)r;
+            var sign = d >= 0 ? (forceSign ? "+" : "") : "-";
+
+            var intPart = (long)d;
+            var intStr = BigInteger.Abs(intPart).ToString(radix);
+            var fraPart = d - intPart;
+            var fraStr = "";
+
+            while (fraPart != 0)
+            {
+                fraPart = fraPart * radix;
+                var integral = (long)fraPart;
+                fraPart = fraPart - integral;
+                fraStr = fraStr + BigIntegerHelpers.ConvertDigitToChar(Math.Abs(integral));
+            }
+
+            if (string.IsNullOrEmpty(fraStr))
+            {
+                return $"{sign}{intStr}";
+            }
+            return $"{sign}{intStr}.{fraStr}";
         }
     }
 }

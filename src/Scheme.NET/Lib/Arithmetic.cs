@@ -44,7 +44,7 @@ namespace Scheme.NET.Lib
             LibHelper.EnsureMinArgCount(args, 1);
 
             if (args.Count() == 1)
-                return AtomHelper.NumberFromComplex(Complex.FromInteger(1) / (args.First() as NumberAtom).Val);
+                return AtomHelper.NumberFromComplex(Complex.CreateExactReal(1) / (args.First() as NumberAtom).Val);
 
             var v = (args.First() as NumberAtom).Val;
 
@@ -65,14 +65,14 @@ namespace Scheme.NET.Lib
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive);
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive());
         }
 
         public static ISExpression Negative(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureAllReal(args);
             LibHelper.EnsureArgCount(args, 1);
-            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative);
+            return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative());
         }
 
         public static ISExpression Odd(Scope scope, IEnumerable<ISExpression> args)
@@ -82,7 +82,7 @@ namespace Scheme.NET.Lib
 
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.IsOdd);
+            return AtomHelper.BooleanFromBool(n.IsOdd());
         }
 
         public static ISExpression Even(Scope scope, IEnumerable<ISExpression> args)
@@ -92,7 +92,7 @@ namespace Scheme.NET.Lib
 
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
-            return AtomHelper.BooleanFromBool(n.IsEven || n.IsZero);
+            return AtomHelper.BooleanFromBool(n.IsEven() || n.IsZero);
         }
 
         public static ISExpression Min(Scope scope, IEnumerable<ISExpression> args)
@@ -129,7 +129,7 @@ namespace Scheme.NET.Lib
 
             var c = a.Val / b.Val;
 
-            if (c.Real.IsInteger)
+            if (c.Real.IsInteger())
             {
                 return AtomHelper.NumberFromComplex(c);
             }
@@ -226,7 +226,7 @@ namespace Scheme.NET.Lib
 
         private static NumberAtom Sum(this IEnumerable<NumberAtom> ee)
         {
-            Complex sum = Complex.FromInteger(0);
+            Complex sum = Complex.CreateExactReal(0);
             foreach (var e in ee)
                 sum = sum + e.Val;
 
@@ -235,7 +235,7 @@ namespace Scheme.NET.Lib
 
         private static NumberAtom Multiply(this IEnumerable<NumberAtom> ee)
         {
-            Complex m = Complex.FromInteger(1);
+            Complex m = Complex.CreateExactReal(1);
             foreach (var e in ee)
                 m = m * e.Val;
 

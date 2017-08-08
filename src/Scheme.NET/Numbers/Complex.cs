@@ -10,55 +10,50 @@ namespace Scheme.NET.Numbers
 {
     public class Complex : IComparable<Complex>, IEquatable<Complex>
     {
-        public IComplexPart Real { get; }
-        public IComplexPart Imag { get; }
+        public Rational Real { get; }
+        public Rational Imag { get; }
         public bool IsExact { get; private set; }
 
         public bool IsZero => Real.IsZero && Imag.IsZero;
-        public bool IsInteger => Real.IsInteger && Imag.IsInteger;
+        public bool IsInteger => Real.IsInteger() && Imag.IsInteger();
 
-        private Complex(IComplexPart real, IComplexPart imag, bool isExact)
+        public Complex(Rational real, Rational imag, bool isExact)
         {
             Real = real;
             Imag = imag;
             IsExact = isExact;
         }
 
-        public Complex(RationalPart real, RationalPart imag)
-        {
-            Real = real;
-            Imag = imag;
-            IsExact = true;
-        }
-
-        public Complex(DoublePart real, DoublePart imag)
-        {
-            Real = real;
-            Imag = imag;
-            IsExact = false;
-        }
-
-        public static Complex operator +(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x.Add(y)); }
-        public static Complex operator -(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x.Sub(y)); }
-        public static Complex operator -(Complex a) { return DoUnary(a, (x) => x.Negate()); }
+        public static Complex operator +(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x + y); }
+        public static Complex operator -(Complex a, Complex b) { return DoBinary(a, b, (x, y) => x - y); }
+        public static Complex operator -(Complex a) { return DoUnary(a, (x) => -x); }
         public static Complex operator *(Complex x, Complex y) {
             PromoteExactness(x, y, out x, out y);
-            var newReal = x.Real.Mul(y.Real).Sub(y.Imag.Mul(y.Imag));
-            var newImag = x.Real.Mul(y.Imag).Add(x.Imag.Mul(y.Real));
+            var newReal = (x.Real * y.Real) - (y.Imag * y.Imag);
+            var newImag = (x.Real * y.Imag) + (x.Imag * y.Real);
             return new Complex(newReal, newImag, x.IsExact);
         }
         public static Complex operator /(Complex x, Complex y) {
             PromoteExactness(x, y, out x, out y);
-            IComplexPart divisor = y.Real.Mul(y.Real).Add(y.Imag.Mul(y.Imag));
-            var newReal = x.Real.Mul(y.Real).Add(x.Imag.Mul(y.Imag)).Div(divisor);
-            var newImag = x.Imag.Mul(y.Real).Sub(x.Real.Mul(y.Imag)).Div(divisor);
+            Rational divisor = (y.Real * y.Real) + (y.Imag * y.Imag);
+            var newReal = ((x.Real * y.Real) + (x.Imag * y.Imag)) / divisor;
+            var newImag = ((x.Imag * y.Real) - (x.Real * y.Imag)) / divisor;
             return new Complex(newReal, newImag, x.IsExact);
         }
 
         public string ToString(int radix)
         {
-            string real = Real.ToString(radix);
-            string imag = Imag.ToString(radix, true);
+            string real, imag;
+            if (IsExact)
+            {
+                real = Real.ToString(radix);
+                imag = Imag.ToString(radix, true);
+            }
+            else
+            {
+                real = Real.ToDecimalString(radix);
+                imag = Imag.ToDecimalString(radix, true);
+            }
 
             if (!Imag.IsZero)
             {
@@ -86,26 +81,26 @@ namespace Scheme.NET.Numbers
         public Complex RealGCD(Complex b) { return DoRealBinary(this, b, (x, y) => x.GCD(y)); }
         public Complex RealModulo(Complex b) { return DoRealBinary(this, b, (x, y) => x.Modulo(y)); }
 
-        private static Complex DoRealUnary(Complex a, Func<IComplexPart, IComplexPart> func)
+        private static Complex DoRealUnary(Complex a, Func<Rational, Rational> func)
         {
             if (!a.Imag.IsZero)
                 throw new InvalidOperationException();
             return new Complex(func(a.Real), a.Imag, a.IsExact);
         }
 
-        private static Complex DoRealBinary(Complex a, Complex b, Func<IComplexPart, IComplexPart, IComplexPart> func)
+        private static Complex DoRealBinary(Complex a, Complex b, Func<Rational, Rational, Rational> func)
         {
             if (!a.Imag.IsZero)
                 throw new InvalidOperationException();
-            return new Complex(func(a.Real, b.Real), RationalPart.FromInteger(0), a.IsExact);
+            return new Complex(func(a.Real, b.Real), 0, a.IsExact);
         }
 
-        private static Complex DoUnary(Complex a, Func<IComplexPart, IComplexPart> func)
+        private static Complex DoUnary(Complex a, Func<Rational, Rational> func)
         {
             return new Complex(func(a.Real), func(a.Imag), a.IsExact);
         }
 
-        private static Complex DoBinary(Complex a, Complex b, Func<IComplexPart, IComplexPart, IComplexPart> func)
+        private static Complex DoBinary(Complex a, Complex b, Func<Rational, Rational, Rational> func)
         {
             PromoteExactness(a, b, out a, out b);
             return new Complex(func(a.Real, b.Real), func(a.Imag, b.Imag), a.IsExact);
@@ -164,33 +159,13 @@ namespace Scheme.NET.Numbers
             if (!this.IsExact)
                 throw new InvalidOperationException();
 
-            var real = this.Real as RationalPart;
-            var imag = this.Imag as RationalPart;
-
-            return new Complex(
-                new DoublePart((double)real.Rational),
-                new DoublePart((double)imag.Rational));
+            return new Complex(Real, Imag, false);
         }
 
-        public static Complex FromRationals(Rational a, Rational b)
-        {
-            return new Complex(RationalPart.FromRational(a), RationalPart.FromRational(b));
-        }
-
-        public static Complex FromDoubles(double a, double b)
-        {
-            return new Complex(DoublePart.FromDouble(a), DoublePart.FromDouble(b));
-        }
-
-        public static Complex FromInteger(BigInteger i)
-        {
-            return new Complex(RationalPart.FromInteger(i), RationalPart.FromInteger(0));
-        }
-
-        public static Complex FromDouble(double d)
-        {
-            return new Complex(DoublePart.FromDouble(d), DoublePart.FromDouble(0));
-        }
+        public static Complex CreateExactReal(Rational a) { return new Complex(a, 0, true); }
+        public static Complex CreateExact(Rational a, Rational b) { return new Complex(a, b, true); }
+        public static Complex CreateInexactReal(double a) { return new Complex((Rational)a, 0, false); }
+        public static Complex CreateInExact(Rational a, Rational b) { return new Complex(a, b, false); }
 
         public override int GetHashCode()
         {

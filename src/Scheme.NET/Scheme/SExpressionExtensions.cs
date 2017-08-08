@@ -25,7 +25,7 @@ namespace Scheme.NET.Scheme
         {
             var c = (sexpr as NumberAtom)?.Val;
             return IsRational(sexpr) &&
-                (c == Complex.FromInteger(0) || c.IsInteger);
+                (c == Complex.CreateExactReal(0) || c.IsInteger);
         }
 
         public static bool IsList(this ISExpression sexpr)
