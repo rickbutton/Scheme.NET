@@ -8,8 +8,6 @@ Some, but not much, care has gone into ensuring compatibility with R5RS, but som
 
 - Performant arithmetic. All arithmetic/numbers are represented with arbitrary precision rationals, and as such are MUCH slower than IEEE floating point.
 - Most procedures. I am slowly implementing more or less everything from R5RS, but most things are not in yet.
-- Vectors. (Mostly laziness, this will be implemented soon).
-
 
 ## What is this?
 
