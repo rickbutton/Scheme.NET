@@ -11,6 +11,7 @@ namespace Scheme.NET.Parser
 {
     public class SchemeParser
     {
+        private static readonly Token LVECTOR = new Token("#(", TokenType.Parens);
         private static readonly Token LPAREN = new Token("(", TokenType.Parens);
         private static readonly Token RPAREN = new Token(")", TokenType.Parens);
         private static readonly Token PROTECT = new Token("'", TokenType.Regular);
@@ -48,6 +49,8 @@ namespace Scheme.NET.Parser
         {
             if (t == LPAREN)
                 return ParseCons(nextToken);
+            if (t == LVECTOR)
+                return ParseVector(nextToken);
             else if (t == RPAREN)
                 ThrowError("unmatched )");
             else if (t == PROTECT)
@@ -85,6 +88,24 @@ namespace Scheme.NET.Parser
             var car = ParseNext(t, nextToken);
             var cdr = ParseCons(nextToken);
             return AtomHelper.CreateCons(car, cdr);
+        }
+
+        private static ISExpression ParseVector(Func<Token> nextToken)
+        {
+            var items = new List<ISExpression>();
+            var t = nextToken();
+            do
+            {
+                if (t == null)
+                    ThrowError("invalid vector format");
+
+                var item = ParseNext(t, nextToken);
+                items.Add(item);
+
+                t = nextToken();
+            } while (t != RPAREN);
+
+            return AtomHelper.CreateVector(items);
         }
 
         private static ISExpression ParseAtom(Token t)

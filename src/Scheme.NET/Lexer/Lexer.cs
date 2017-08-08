@@ -22,7 +22,9 @@ namespace Scheme.NET.Lexer
         private List<char> _temp;
         private List<char> _escape;
 
-        private static readonly string PARENS = "()";
+        private static readonly string LPAREN = "()";
+        private static readonly string RPAREN = "()";
+        private static readonly string PARENS = LPAREN + RPAREN;
         private static readonly string WS = "\t\r\n ";
         private static readonly string SPLIT = PARENS + WS + ";";
         private static readonly string PROTECT = "'";
@@ -127,6 +129,13 @@ namespace Scheme.NET.Lexer
                 EmitSymbol(string.Join("", _temp));
                 _temp.Clear();
                 return null;
+            }
+            else if (LPAREN.Contains(c.Value) && _temp.Count() == 1 && _temp[0] == '#')
+            {
+                _temp.Add(c.Value);
+                EmitParens(string.Join("", _temp));
+                _temp.Clear();
+                return new LexerState(ReadyState);
             }
             else if (SPLIT.Contains(c.Value))
             {

@@ -188,6 +188,7 @@ namespace Scheme.NET.Scheme
             return _symbolCache[val];
         }
 
+        public static Vector CreateVector(IEnumerable<ISExpression> items) { return new Vector(items.ToArray()); }
         public static Cons CreateCons(ISExpression car, ISExpression cdr) { return new Cons(car, cdr); }
         public static Procedure CreateProcedure(string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> proc, bool primitive) { return new Procedure(name, proc, primitive); }
 

@@ -63,6 +63,7 @@
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheme\AtomHelper.cs" />
+    <Compile Include="Scheme\Vector.cs" />
     <Compile Include="Scheme\Cons.cs" />
     <Compile Include="Scheme\ISExpression.cs" />
     <Compile Include="Scheme\AtomBase.cs" />
