@@ -12,7 +12,7 @@ namespace Scheme.NET.Scheme
         public T Val { get; private set; }
         protected AtomBase(T val) { Val = val; }
 
-        public string String() { return Val.ToString(); }
+        public virtual string String() { return Val.ToString(); }
 
         public bool Equals(ISExpression other)
         {
@@ -31,7 +31,13 @@ namespace Scheme.NET.Scheme
     }
 
     public class NumberAtom : AtomBase<Complex> { internal NumberAtom(Complex val) : base(val) { } }
-    public class BooleanAtom : AtomBase<bool> { internal BooleanAtom(bool val) : base(val) { } }
+    public class BooleanAtom : AtomBase<bool> {
+        internal BooleanAtom(bool val) : base(val) { }
+        public override string String()
+        {
+            return Val ? "#t" : "#f";
+        }
+    }
     public class SymbolAtom : AtomBase<string> { internal SymbolAtom(string val) : base(val) { } }
     public class StringAtom : AtomBase<string> { internal StringAtom(string val) : base(val) { } }
     public class CharAtom : AtomBase<char> { internal CharAtom(char val) : base(val) { } }

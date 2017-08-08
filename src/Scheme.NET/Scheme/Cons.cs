@@ -19,7 +19,13 @@ namespace Scheme.NET.Scheme
 
         public string String()
         {
-            return $"({Car.String()} . {Cdr.String()})";
+            if (this.IsList())
+            {
+                return $"({Car.String()} {string.Join(" ", Cdr.Flatten().Select(c => c.String()))})";
+            } else
+            {
+                return $"({Car.String()} . {Cdr.String()})";
+            }
         }
 
         public bool Equals(ISExpression other)
