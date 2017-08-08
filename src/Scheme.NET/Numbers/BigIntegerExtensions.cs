@@ -1,7 +1,7 @@
-﻿using Microsoft.SolverFoundation.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,7 +39,7 @@ namespace Scheme.NET.Numbers
                 var success = TryParseDigit(s[i], radix, out res);
                 if (!success) return false;
 
-                res = res * BigInteger.Power(radix, (s.Length - i - 1));
+                res = res * BigInteger.Pow(radix, (s.Length - i - 1));
                 b = b + res;
             }
             return true;

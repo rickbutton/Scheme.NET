@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scheme.NET.Numbers;
-using Microsoft.SolverFoundation.Common;
 
 namespace Scheme.NET.Lib
 {
@@ -130,7 +129,14 @@ namespace Scheme.NET.Lib
 
             var c = a.Val / b.Val;
 
-            return AtomHelper.NumberFromComplex(c.RealFloor());
+            if (c.Real.IsInteger)
+            {
+                return AtomHelper.NumberFromComplex(c);
+            }
+            else
+            {
+                return AtomHelper.NumberFromComplex(c.RealTruncate());
+            }
         }
 
         public static ISExpression Remainder(Scope scope, IEnumerable<ISExpression> args)

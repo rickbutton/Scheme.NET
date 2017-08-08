@@ -1,7 +1,8 @@
-﻿using Microsoft.SolverFoundation.Common;
+﻿using Rationals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -167,8 +168,8 @@ namespace Scheme.NET.Numbers
             var imag = this.Imag as RationalPart;
 
             return new Complex(
-                new DoublePart(real.Rational.GetSignedDouble()),
-                new DoublePart(imag.Rational.GetSignedDouble()));
+                new DoublePart((double)real.Rational),
+                new DoublePart((double)imag.Rational));
         }
 
         public static Complex FromRationals(Rational a, Rational b)

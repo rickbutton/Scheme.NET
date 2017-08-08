@@ -16,7 +16,7 @@ namespace Scheme.NET.Tests.ProcedureTests
         {
             Assert.AreEqual(AtomHelper.NumberFromComplex(5), Eval("(quotient 5 1)"));
             Assert.AreEqual(AtomHelper.NumberFromComplex(3), Eval("(quotient 13 4)"));
-            Assert.AreEqual(AtomHelper.NumberFromComplex(-4), Eval("(quotient -13 4)"));
+            Assert.AreEqual(AtomHelper.NumberFromComplex(-3), Eval("(quotient -13 4)"));
         }
 
         [Test]

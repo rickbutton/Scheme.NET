@@ -1,7 +1,8 @@
-﻿using Microsoft.SolverFoundation.Common;
+﻿using Rationals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,10 +32,12 @@ namespace Scheme.NET.Numbers
         public override IComplexPart Mul(IComplexPart b) { return DoBinary(this, b, (x, y) => x * y); }
         public override IComplexPart Div(IComplexPart b) { return DoBinary(this, b, (x, y) => x / y); }
         public override IComplexPart Negate() { return DoUnary(this, (x) => -x); }
-        public override IComplexPart Abs() { return DoUnary(this, (x) => x.AbsoluteValue); }
-        public override IComplexPart Floor() { return DoUnary(this, (x) => x.GetFloor()); }
-        public override IComplexPart Ceiling() { return DoUnary(this, (x) => x.GetCeiling()); }
-        public override IComplexPart Truncate() { return DoUnary(this, (x) => x.GetIntegerPart()); }
+        public override IComplexPart Abs() { return DoUnary(this, (x) => x.Abs()); }
+        public override IComplexPart Floor() { return DoUnary(this, (x) => x.Floor()); }
+        public override IComplexPart Ceiling() { return DoUnary(this, (x) => x.Ceiling()); }
+        public override IComplexPart Truncate() {
+            return DoUnary(this, (x) => x.Truncate());
+        }
         public override IComplexPart Round() { return DoUnary(this, (x) => x.Round()); }
         public override IComplexPart GCD(IComplexPart b)
         {
@@ -67,9 +70,9 @@ namespace Scheme.NET.Numbers
             if (Rational.IsZero) return "0";
             if (Rational.Denominator == 1)
             {
-                return $"{sign}{Rational.Numerator.AbsoluteValue.ToString(radix)}";
+                return $"{sign}{BigInteger.Abs(Rational.Numerator).ToString(radix)}";
             }
-            return $"{sign}{Rational.Numerator.AbsoluteValue.ToString(radix)}/{Rational.Denominator.AbsoluteValue.ToString(radix)}";
+            return $"{sign}{BigInteger.Abs(Rational.Numerator).ToString(radix)}/{BigInteger.Abs(Rational.Denominator).ToString(radix)}";
         }
 
         private static RationalPart DoUnary(RationalPart a, Func<Rational, Rational> func)
@@ -104,7 +107,7 @@ namespace Scheme.NET.Numbers
             return this.Rational.CompareTo(((RationalPart)other).Rational);
         }
 
-        public static RationalPart FromInteger(BigInteger i) { return new RationalPart(Rational.Get(i, 1)); }
+        public static RationalPart FromInteger(BigInteger i) { return new RationalPart(new Rational(i, 1)); }
         public static RationalPart FromRational(Rational r) { return new RationalPart(r); }
     }
 }

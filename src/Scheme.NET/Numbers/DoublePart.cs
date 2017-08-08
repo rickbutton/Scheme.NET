@@ -1,7 +1,7 @@
-﻿using Microsoft.SolverFoundation.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,7 +58,7 @@ namespace Scheme.NET.Numbers
             var sign = Double >= 0 ? (forceSign ? "+" : "") : "-";
 
             var intPart = (long)Double;
-            var intStr = ((BigInteger)intPart).AbsoluteValue.ToString(radix);
+            var intStr = BigInteger.Abs((BigInteger)intPart).ToString(radix);
             var fraPart = Double - intPart;
             var fraStr = "";
 

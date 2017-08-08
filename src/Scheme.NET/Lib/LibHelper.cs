@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scheme.NET.Numbers;
-using Microsoft.SolverFoundation.Common;
 
 namespace Scheme.NET.Lib
 {

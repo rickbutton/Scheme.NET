@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.SolverFoundation.Common;
 using Scheme.NET.Numbers;
 using System.Text.RegularExpressions;
+using System.Numerics;
+using Complex = Scheme.NET.Numbers.Complex;
+using Rationals;
 
 namespace Scheme.NET.Scheme
 {
@@ -142,7 +144,7 @@ namespace Scheme.NET.Scheme
                 success = BigIntegerHelpers.TryParse(bot, radix, out b);
                 if (!success) { r = 0; d = 0; return false; }
 
-                result = Rational.Get(t, b);
+                result = new Rational(t, b);
             }
             else
             {
@@ -150,8 +152,7 @@ namespace Scheme.NET.Scheme
                 var success = BigIntegerHelpers.TryParse(top + bot, radix, out n);
                 if (!success) { r = 0; d = 0; return false; }
 
-                Rational factor;
-                Rational.Power(radix, -bot.Length, out factor);
+                Rational factor = Rational.Pow(radix, -bot.Length);
                 result = n * factor;
             }
             if (exactness)
@@ -161,7 +162,7 @@ namespace Scheme.NET.Scheme
             } else
             {
                 r = 0;
-                d = result.GetSignedDouble() * isign;
+                d = ((double)result) * isign;
             }
             return true;
         }
