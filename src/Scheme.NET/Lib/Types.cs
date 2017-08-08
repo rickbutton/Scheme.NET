@@ -109,6 +109,7 @@ namespace Scheme.NET.Lib
                 return AtomHelper.BooleanFromBool(true);
             if ((a.IsCons() && b.IsCons()) || 
                 (a.IsString() && b.IsString()) || 
+                (a.IsVector() && b.IsVector()) || 
                 (a.IsProcedure() && b.IsProcedure()))
                 return AtomHelper.BooleanFromBool(a == b);
 

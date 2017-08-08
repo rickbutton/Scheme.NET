@@ -29,7 +29,7 @@ namespace Scheme.NET.Scheme
                     return false;
 
                 for (var i = 0; i < Values.Count(); i++)
-                    if (Values[i] != v.Values[i])
+                    if (!Values[i].Equals(v.Values[i]))
                         return false;
 
                 return true;

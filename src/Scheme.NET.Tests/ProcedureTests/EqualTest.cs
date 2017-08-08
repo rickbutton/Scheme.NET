@@ -69,9 +69,23 @@ namespace Scheme.NET.Tests.ProcedureTests
         public void TestLocs()
         {
             Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a2"), Eval("(1 . 3)"));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a3"), Eval("(1 . 2)"));
             Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b2"), Eval("\"testa\""));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b3"), Eval("\"test\""));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c2"), Eval("#(1 3)"));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c3"), Eval("#(1 2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? a a)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(equal? a a2)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(equal? a a3)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? b b)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(equal? b b2)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(equal? b b3)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(equal? c c)"));
+            Assert.AreEqual(AtomHelper.False, Eval("(equal? c c2)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(equal? c c3)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? + +)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? (1 . 2) (1 . 2))"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? \"test\" \"test\")"));

@@ -70,8 +70,10 @@ namespace Scheme.NET.Tests.ProcedureTests
         {
             Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
             Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
+            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eq? a a)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eq? b b)"));
+            Assert.AreEqual(AtomHelper.True, Eval("(eq? c c)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eq? + +)"));
             Assert.AreEqual(AtomHelper.False, Eval("(eq? (1 . 2) (1 . 2))"));
         }

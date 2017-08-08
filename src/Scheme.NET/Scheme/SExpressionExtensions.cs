@@ -16,6 +16,7 @@ namespace Scheme.NET.Scheme
         public static bool IsChar(this ISExpression sexpr) { return sexpr is CharAtom; }
         public static bool IsProcedure(this ISExpression sexpr) { return sexpr is Procedure; }
         public static bool IsCons(this ISExpression sexpr) { return sexpr is Cons; }
+        public static bool IsVector(this ISExpression sexpr) { return sexpr is Vector; }
         public static bool IsNil(this ISExpression sexpr) { return sexpr is NilAtom; }
 
         public static bool IsComplex(this ISExpression sexpr) { return IsNumber(sexpr); }
