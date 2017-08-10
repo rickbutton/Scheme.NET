@@ -62,6 +62,22 @@ namespace Scheme.NET.Lib
             return AtomHelper.BooleanFromBool(args.First().IsComplex());
         }
 
+        public static ISExpression IsExact(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 1);
+            LibHelper.EnsureAllNumber(args);
+            var n = args.First() as NumberAtom;
+            return AtomHelper.BooleanFromBool(args.First().IsNumber() && n.Val.IsExact);
+        }
+
+        public static ISExpression IsInexact(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 1);
+            LibHelper.EnsureAllNumber(args);
+            var n = args.First() as NumberAtom;
+            return AtomHelper.BooleanFromBool(args.First().IsNumber() && !n.Val.IsExact);
+        }
+
         public static ISExpression IsChar(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureArgCount(args, 1);
@@ -119,10 +135,23 @@ namespace Scheme.NET.Lib
         public static ISExpression Equal(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureArgCount(args, 2);
+
             var a = args.ToArray()[0];
             var b = args.ToArray()[1];
 
-            return AtomHelper.BooleanFromBool((a.Equals(b)));
+            if (
+                (a.IsCons() && b.IsCons()) ||
+                (a.IsVector() && b.IsVector()) ||
+                (a.IsString() && b.IsString())
+                )
+            {
+                return AtomHelper.BooleanFromBool((a.Equals(b)));
+            }
+            else
+            {
+                return Eqv(scope, args);
+            }
+
         }
     }
 }

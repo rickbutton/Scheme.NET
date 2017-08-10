@@ -13,20 +13,20 @@ namespace Scheme.NET.Eval
 
         public Evaluator()
         {
-            GlobalScope = new Scope();
+            GlobalScope = new Scope(this);
         }
 
         public Evaluator(IDictionary<SymbolAtom, ISExpression> data)
         {
-            GlobalScope = new Scope(data);
+            GlobalScope = new Scope(this, data);
         }
 
-        public ISExpression Eval(ISExpression e)
+        public ISExpression Eval(ISExpression e, Scope scope)
         {
             if (e.IsCons() && e.IsList())
             {
                 var cons = e as Cons;
-                var car = Eval(cons.Car);
+                var car = Eval(cons.Car, scope);
 
                 if (!car.IsProcedure())
                     ThrowError("Attempted application of non-function");
@@ -40,13 +40,13 @@ namespace Scheme.NET.Eval
                 {
                     for (var i = 0; i < args.Length; i++)
                     {
-                        args[i] = Eval(args[i]);
+                        args[i] = Eval(args[i], scope);
                     }
                 }
                 return proc.Proc(GlobalScope, args);
             }
             else if (e.IsSymbol())
-                return GlobalScope.Lookup(e as SymbolAtom);
+                return scope.Lookup(e as SymbolAtom);
 
             return e;
         }

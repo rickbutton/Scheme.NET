@@ -14,22 +14,32 @@ namespace Scheme.NET.Tests.ProcedureTests
 {
     public abstract class TestBase
     {
-        private SchemeLexer lexer;
+        protected SchemeLexer Lexer;
         protected Evaluator Evaluator;
 
         [SetUp]
         protected void SetUp()
         {
-            lexer = new SchemeLexer();
+            Lexer = new SchemeLexer();
             Evaluator = new Evaluator(Library.CreateBase());
         }
 
         protected ISExpression Eval(string input)
         {
-            var toks = lexer.Lex(input);
-            var ss = SchemeParser.Parse(toks);
-            ss = ss.Select(Evaluator.Eval);
-            return ss.First();
+            var toks = Lexer.Lex(input);
+            var s = SchemeParser.Parse(toks);
+            s = s.Select(ss => Evaluator.Eval(ss, Evaluator.GlobalScope));
+            if (s.Count() > 0)
+                return s.First();
+            else
+                return null;
+        }
+
+        protected IEnumerable<ISExpression> EvalAll(string input)
+        {
+            var toks = Lexer.Lex(input);
+            var s = SchemeParser.Parse(toks);
+            return s.Select(ss => Evaluator.Eval(ss, Evaluator.GlobalScope));
         }
     }
 }

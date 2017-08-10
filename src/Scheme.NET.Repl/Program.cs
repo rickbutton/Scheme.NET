@@ -16,6 +16,7 @@ namespace Scheme.NET.Repl
         {
             var data = Library.CreateBase();
             var eval = new Evaluator(data);
+            var lexer = new SchemeLexer();
 
             var input = "";
             while (true)
@@ -23,18 +24,23 @@ namespace Scheme.NET.Repl
                 input += Console.ReadLine();
                 if (IsBalanced(input))
                 {
-                    var lexer = new SchemeLexer();
                     var tokens = lexer.Lex(input);
                     input = "";
 
                     var s = SchemeParser.Parse(tokens);
 
-                    s = s.Select(eval.Eval);
+                    try
+                    {
+                        s = s.Select(ss => eval.Eval(ss, eval.GlobalScope));
 
-                    foreach (var se in s)
-                        if (se != null)
-                            Console.WriteLine(se.String());
-
+                        foreach (var se in s)
+                            if (se != null)
+                                Console.WriteLine(se.String());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("[ERROR] " + e.Message);
+                    }
                     Console.WriteLine();
                 }
             }

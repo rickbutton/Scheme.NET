@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scheme.NET.Eval;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,32 @@ namespace Scheme.NET.Scheme
         public IDictionary<SymbolAtom, ISExpression> Data { get; private set; }
         public Scope Parent { get; private set; }
 
-        public Scope(Scope parent = null)
+        private Evaluator _evaluator;
+
+        public Scope(Evaluator evaluator)
+        {
+            Data = new Dictionary<SymbolAtom, ISExpression>();
+            Parent = null;
+            _evaluator = evaluator;
+        }
+
+        public Scope(Scope parent)
         {
             Data = new Dictionary<SymbolAtom, ISExpression>();
             Parent = parent;
+            _evaluator = parent._evaluator;
         }
 
-        public Scope(IDictionary<SymbolAtom, ISExpression> data)
+        public Scope(Evaluator evaluator, IDictionary<SymbolAtom, ISExpression> data)
         {
             Data = data;
             Parent = null;
+            _evaluator = evaluator;
+        }
+
+        public ISExpression Eval(ISExpression e)
+        {
+            return _evaluator.Eval(e, this);
         }
 
         public ISExpression Lookup(SymbolAtom sym)

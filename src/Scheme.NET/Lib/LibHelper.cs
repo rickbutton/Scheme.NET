@@ -77,6 +77,18 @@ namespace Scheme.NET.Lib
                 ArgError($"argument {i} must be cons");
         }
 
+        public static void EnsureList(IEnumerable<ISExpression> args, int i)
+        {
+            if (!args.ToArray()[i].IsList())
+                ArgError($"argument {i} must be list");
+        }
+
+        public static void EnsureSymbol(IEnumerable<ISExpression> args, int i)
+        {
+            if (!args.ToArray()[i].IsSymbol())
+                ArgError($"argument {i} must be symbol");
+        }
+
         public static void ArgError(string msg)
         {
             throw new InvalidOperationException($"Argument error: {msg}");

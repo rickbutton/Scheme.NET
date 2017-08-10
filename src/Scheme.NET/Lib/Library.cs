@@ -52,6 +52,8 @@ namespace Scheme.NET.Lib
             AddFunction(dict, "real?", Types.IsReal);
             AddFunction(dict, "rational?", Types.IsRational);
             AddFunction(dict, "integer?", Types.IsInteger);
+            AddFunction(dict, "exact?", Types.IsExact);
+            AddFunction(dict, "inexact?", Types.IsInexact);
 
             AddFunction(dict, "zero?", Arithmetic.Zero);
             AddFunction(dict, "positive?", Arithmetic.Positive);
@@ -59,8 +61,9 @@ namespace Scheme.NET.Lib
             AddFunction(dict, "odd?", Arithmetic.Odd);
             AddFunction(dict, "even?", Arithmetic.Even);
 
-            AddFunction(dict, "eqv?", Types.Eqv);
-            AddFunction(dict, "eq?", Types.Eqv);
+            var eqv = AtomHelper.CreateProcedure("eqv?", Types.Eqv, false);
+            AddFunction(dict, "eqv?", eqv);
+            AddFunction(dict, "eq?", eqv);
             AddFunction(dict, "equal?", Types.Equal);
 
             AddFunction(dict, "cons", Pairs.Cons);
@@ -70,6 +73,9 @@ namespace Scheme.NET.Lib
             AddFunction(dict, "set-cdr!", Pairs.SetCdr);
 
             AddPrimitive(dict, "quote", Primitives.Quote);
+            AddPrimitive(dict, "lambda", Primitives.Lambda);
+            AddPrimitive(dict, "if", Primitives.If);
+            AddPrimitive(dict, "set!", Primitives.Set);
 
             return dict;
         }
@@ -77,6 +83,11 @@ namespace Scheme.NET.Lib
         private static void AddFunction(IDictionary<SymbolAtom, ISExpression> d, string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> p)
         {
             d[AtomHelper.SymbolFromString(name)] = AtomHelper.CreateProcedure(name, p, false);
+        }
+
+        private static void AddFunction(IDictionary<SymbolAtom, ISExpression> d, string name, Procedure p)
+        {
+            d[AtomHelper.SymbolFromString(name)] = p;
         }
 
         private static void AddPrimitive(IDictionary<SymbolAtom, ISExpression> d, string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> p)

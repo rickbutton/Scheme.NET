@@ -37,11 +37,11 @@ namespace Scheme.NET.Parser
             var sexprs = new List<ISExpression>();
 
             Token t = nextToken();
-            do
+            while (t != null)
             {
                 sexprs.Add(ParseNext(t, nextToken));
                 t = nextToken();
-            } while (t != null);
+            }
             return sexprs;
         }
 
