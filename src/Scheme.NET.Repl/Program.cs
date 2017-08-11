@@ -15,8 +15,7 @@ namespace Scheme.NET.Repl
     {
         public static void Main(string[] args)
         {
-            var data = Library.CreateBase();
-            var eval = new Evaluator(data);
+            var env = Environment.Create();
 
             var input = "";
             while (true)
@@ -24,31 +23,14 @@ namespace Scheme.NET.Repl
                 input += Console.ReadLine();
                 if (IsBalanced(input))
                 {
-                    AntlrInputStream inputStream = new AntlrInputStream(input);
-                    SchemeLexer lexer = new SchemeLexer(inputStream);
-                    CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
-                    SchemeParser parser = new SchemeParser(commonTokenStream);
-
-                    var context = parser.body();
-                    var visitor = new SchemeVisitor();
-                    var expr = visitor.Visit(context);
-
                     try
                     {
-                        ISExpression[] arr;
-                        if (expr is ISExpression)
-                            arr = new ISExpression[] { (ISExpression)expr };
-                        else if (expr is ISExpression[])
-                            arr = (ISExpression[])expr;
-                        else
-                            throw new InvalidOperationException("parser error, unknown type: " + expr.GetType().Name);
+                        var arr = env.Eval(input);
 
                         foreach (var a in arr)
                         {
-                            var result = eval.Eval(a, eval.GlobalScope);
-
-                            if (result != null) 
-                                Console.WriteLine(result.String());
+                            if (a != null) 
+                                Console.WriteLine(a.String());
                         }
                     } catch (Exception e)
                     {

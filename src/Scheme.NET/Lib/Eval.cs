@@ -1,4 +1,5 @@
-﻿using Scheme.NET.Scheme;
+﻿using Scheme.NET.Lib;
+using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,26 +8,23 @@ using System.Threading.Tasks;
 
 namespace Scheme.NET.Eval
 {
-    public class Evaluator
+    public static class Evaluator
     {
-        public Scope GlobalScope { get; private set; }
-
-        public Evaluator()
+        public static ISExpression Eval(Scope scope, ISExpression e)
         {
-            GlobalScope = new Scope(this);
+            return Eval(scope, new ISExpression[] { e });
         }
 
-        public Evaluator(IDictionary<SymbolAtom, ISExpression> data)
+        public static ISExpression Eval(Scope scope, IEnumerable<ISExpression> es)
         {
-            GlobalScope = new Scope(this, data);
-        }
+            LibHelper.EnsureArgCount(es, 1);
 
-        public ISExpression Eval(ISExpression e, Scope scope)
-        {
+            var e = es.First();
+
             if (e.IsCons() && e.IsList())
             {
                 var cons = e as Cons;
-                var car = Eval(cons.Car, scope);
+                var car = Eval(scope, cons.Car);
 
                 if (!car.IsProcedure())
                     ThrowError("Attempted application of non-function");
@@ -40,10 +38,10 @@ namespace Scheme.NET.Eval
                 {
                     for (var i = 0; i < args.Length; i++)
                     {
-                        args[i] = Eval(args[i], scope);
+                        args[i] = Eval(scope, args[i]);
                     }
                 }
-                return proc.Proc(GlobalScope, args);
+                return proc.Proc(scope, args);
             }
             else if (e.IsSymbol())
                 return scope.Lookup(e as SymbolAtom);
@@ -51,7 +49,7 @@ namespace Scheme.NET.Eval
             return e;
         }
 
-        private void ThrowError(string msg)
+        private static void ThrowError(string msg)
         {
             throw new InvalidOperationException($"Eval error: {msg}");
         }

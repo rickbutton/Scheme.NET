@@ -68,6 +68,8 @@ UNQUOTE : ',';
 SPLICING_UNQUOTE : ',@';
 DOT : '.';
 
+COMMENT : ';' ~[\r\n]* -> channel(HIDDEN);
+
 IDENTIFIER : INITIAL SUBSEQUENT*
            | '|' SYMBOL_ELEMENT* '|'
            | PECULIAR_IDENTIFIER

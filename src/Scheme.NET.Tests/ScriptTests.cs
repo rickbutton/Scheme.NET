@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Scheme.NET.Eval;
 using Scheme.NET.Scheme;
 using Scheme.NET.Tests.ProcedureTests;
 using System;
@@ -20,24 +21,22 @@ namespace Scheme.NET.Tests
         public void TestScripts()
         {
             var path = Path.GetDirectoryName(typeof(ScriptTests).GetTypeInfo().Assembly.Location);
-            var tests = File.ReadAllLines(Path.Combine(path, "tests.scm"));
+            var tests = File.ReadAllText(Path.Combine(path, "tests.scm"));
 
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("test"),
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("test"),
                 AtomHelper.CreateProcedure("test", Test, true));
 
             var errors = "";
-            for (var i = 0; i < tests.Length; i++)
+            var exprs = EvalAll(tests).ToArray();
+            for (var i = 0; i < exprs.Count(); i++)
             {
-                if (string.IsNullOrEmpty(tests[i]))
-                    continue;
-
-                var result = Eval(tests[i] + "\n");
+                var result = exprs[i];
                 if (result == null)
                     continue;
 
                 if (result != AtomHelper.True)
                 {
-                    errors += $"{(i + 1).ToString().PadLeft(3, '0')} : {result.String()}\n";
+                    errors += result.String();
                 }
             }
             if (errors != "")
@@ -51,8 +50,8 @@ namespace Scheme.NET.Tests
             var actual = arr[0];
             var expected = arr[1];
 
-            var actualResult = Evaluator.Eval(actual, scope);
-            var expectedResult = Evaluator.Eval(expected, scope);
+            var actualResult = Evaluator.Eval(scope, actual);
+            var expectedResult = Evaluator.Eval(scope, expected);
 
             if (actualResult.Equals(expectedResult))
                 return AtomHelper.True;

@@ -1,8 +1,6 @@
 ﻿using NUnit.Framework;
 using Scheme.NET.Eval;
-using Scheme.NET.Lexer;
 using Scheme.NET.Lib;
-using Scheme.NET.Parser;
 using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
@@ -68,15 +66,15 @@ namespace Scheme.NET.Tests.ProcedureTests
         [Test]
         public void TestLocs()
         {
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a2"), Eval("(1 . 3)"));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("a3"), Eval("(1 . 2)"));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b2"), Eval("\"testa\""));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("b3"), Eval("\"test\""));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c2"), Eval("#(1 3)"));
-            Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("c3"), Eval("#(1 2)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a2"), Eval("(1 . 3)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a3"), Eval("(1 . 2)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b2"), Eval("\"testa\""));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b3"), Eval("\"test\""));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c2"), Eval("#(1 3)"));
+            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c3"), Eval("#(1 2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? a a)"));
             Assert.AreEqual(AtomHelper.False, Eval("(equal? a a2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? a a3)"));
