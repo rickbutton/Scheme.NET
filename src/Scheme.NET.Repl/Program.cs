@@ -7,6 +7,7 @@ using Scheme.NET.Eval;
 using Scheme.NET.Lib;
 using Antlr4.Runtime;
 using Scheme.NET.Visitors;
+using Scheme.NET.Scheme;
 
 namespace Scheme.NET.Repl
 {
@@ -28,16 +29,27 @@ namespace Scheme.NET.Repl
                     CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
                     SchemeParser parser = new SchemeParser(commonTokenStream);
 
-                    var context = parser.datum();
+                    var context = parser.body();
                     var visitor = new SchemeVisitor();
                     var expr = visitor.Visit(context);
 
                     try
                     {
-                        var result = eval.Eval(expr, eval.GlobalScope);
+                        ISExpression[] arr;
+                        if (expr is ISExpression)
+                            arr = new ISExpression[] { (ISExpression)expr };
+                        else if (expr is ISExpression[])
+                            arr = (ISExpression[])expr;
+                        else
+                            throw new InvalidOperationException("parser error, unknown type: " + expr.GetType().Name);
 
-                        if (result != null) 
-                            Console.WriteLine(result.String());
+                        foreach (var a in arr)
+                        {
+                            var result = eval.Eval(a, eval.GlobalScope);
+
+                            if (result != null) 
+                                Console.WriteLine(result.String());
+                        }
                     } catch (Exception e)
                     {
                         Console.WriteLine("[ERROR] " + e.Message);

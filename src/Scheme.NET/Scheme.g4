@@ -51,6 +51,8 @@ abbreviation : abbrevPrefix datum;
 
 abbrevPrefix : '`' | ',' | ',@';
 
+body : datum+;
+
 // Lexer rules
 
 fragment
@@ -60,7 +62,6 @@ LINE_ENDING : '\n' | '\r\n' | '\r';
 LPAREN : '(';
 RPAREN : ')';
 VECTORPAREN : '#(';
-BYTEPAREN : '#u8(';
 QUOTE : '\'';
 QUASIQUOTE : '`';
 UNQUOTE : ',';
