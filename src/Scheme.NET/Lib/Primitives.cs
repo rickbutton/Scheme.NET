@@ -138,5 +138,33 @@ namespace Scheme.NET.Lib
             };
             return AtomHelper.CreateProcedure("<anonymous>", func, true);
         }
+
+        public static ISExpression Define(Scope scope, IEnumerable<ISExpression> args)
+        {
+            LibHelper.EnsureArgCount(args, 2);
+            LibHelper.EnsureSymbol(args, 0);
+
+            var aa = args.ToArray();
+
+            var result = Evaluator.Eval(scope, aa[1]);
+            scope.Define(aa[0] as SymbolAtom, result);
+
+            return AtomHelper.Nil;
+        }
+
+        private static bool IsManyVarList(ISExpression sexpr)
+        {
+            var c = sexpr as Cons;
+
+            if (sexpr.IsCons())
+            {
+                if (!c.Car.IsCons())
+                {
+                    if (IsManyVarList(c.Cdr) || !c.Cdr.IsNil())
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 }

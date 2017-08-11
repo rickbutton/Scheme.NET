@@ -74,6 +74,7 @@ namespace Scheme.NET.Lib
 
             AddPrimitive(dict, "quote", Primitives.Quote);
             AddPrimitive(dict, "lambda", Primitives.Lambda);
+            AddPrimitive(dict, "define", Primitives.Define);
             AddPrimitive(dict, "if", Primitives.If);
             AddPrimitive(dict, "set!", Primitives.Set);
 
