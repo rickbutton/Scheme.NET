@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scheme.NET.Lexer;
-using Scheme.NET.Parser;
 using Scheme.NET.Eval;
 using Scheme.NET.Lib;
+using Antlr4.Runtime;
+using Scheme.NET.Visitors;
 
 namespace Scheme.NET.Repl
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var data = Library.CreateBase();
             var eval = new Evaluator(data);
-            var lexer = new SchemeLexer();
 
             var input = "";
             while (true)
@@ -24,24 +23,27 @@ namespace Scheme.NET.Repl
                 input += Console.ReadLine();
                 if (IsBalanced(input))
                 {
-                    var tokens = lexer.Lex(input);
-                    input = "";
+                    AntlrInputStream inputStream = new AntlrInputStream(input);
+                    SchemeLexer lexer = new SchemeLexer(inputStream);
+                    CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
+                    SchemeParser parser = new SchemeParser(commonTokenStream);
 
-                    var s = SchemeParser.Parse(tokens);
+                    var context = parser.datum();
+                    var visitor = new SchemeVisitor();
+                    var expr = visitor.Visit(context);
 
                     try
                     {
-                        s = s.Select(ss => eval.Eval(ss, eval.GlobalScope));
+                        var result = eval.Eval(expr, eval.GlobalScope);
 
-                        foreach (var se in s)
-                            if (se != null)
-                                Console.WriteLine(se.String());
-                    }
-                    catch (Exception e)
+                        if (result != null) 
+                            Console.WriteLine(result.String());
+                    } catch (Exception e)
                     {
                         Console.WriteLine("[ERROR] " + e.Message);
                     }
-                    Console.WriteLine();
+                    input = "";
+
                 }
             }
         }

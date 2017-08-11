@@ -177,6 +177,10 @@ namespace Scheme.NET.Scheme
                 return new CharAtom(' ');
             if (c == "newline")
                 return new CharAtom('\n');
+            if (c == "return")
+                return new CharAtom('\r');
+            if (c == "tab")
+                return new CharAtom('\t');
 
             throw new InvalidOperationException("Unknown character name: " + c);
         }

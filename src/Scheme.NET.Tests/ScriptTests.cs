@@ -19,7 +19,7 @@ namespace Scheme.NET.Tests
         [Test]
         public void TestScripts()
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+            var path = Path.GetDirectoryName(typeof(ScriptTests).GetTypeInfo().Assembly.Location);
             var tests = File.ReadAllLines(Path.Combine(path, "tests.scm"));
 
             Evaluator.GlobalScope.Define(AtomHelper.SymbolFromString("test"),

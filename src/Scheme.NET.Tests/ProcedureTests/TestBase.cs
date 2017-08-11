@@ -18,7 +18,7 @@ namespace Scheme.NET.Tests.ProcedureTests
         protected Evaluator Evaluator;
 
         [SetUp]
-        protected void SetUp()
+        public void SetUp()
         {
             Lexer = new SchemeLexer();
             Evaluator = new Evaluator(Library.CreateBase());

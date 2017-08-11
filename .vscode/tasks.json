@@ -1,0 +1,24 @@
+{
+    "version": "0.1.0",
+    "command": "dotnet",
+    "isShellCommand": true,
+    "args": [],
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": [
+                "${workspaceRoot}/src/Scheme.NET/Scheme.NET.csproj",
+                "${workspaceRoot}/src/Scheme.NET/Scheme.NET.Tests.csproj"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "test",
+            "isTestCommand": true,
+            "args": [
+                "${workspaceRoot}/src/Scheme.NET.Tests/Scheme.NET.Tests.csproj"
+            ]
+        }
+    ]
+}
