@@ -35,30 +35,28 @@ namespace Scheme.NET.Visitors
             return AtomHelper.SymbolFromString(context.IDENTIFIER().GetText());
         }
 
-        public override object VisitPair([NotNull] SchemeParser.PairContext context)
-        {
-            var elements = context.datum().Select(Visit)
-                .Cast<ISExpression>()
-                .ToArray();
-            return AtomHelper.CreateCons(elements[0], elements[1]);
-        }
-
         public override object VisitList([NotNull] SchemeParser.ListContext context)
         {
-            var elements = context.datum().Select(Visit);
-            if (elements.Count() == 0)
-                return AtomHelper.Nil;
-            return CreateList(elements.Cast<ISExpression>());
+            var elements = context.datumOrPair();
+
+            return CreateList(elements);
         }
 
-        private object CreateList(IEnumerable<ISExpression> elements)
+        private object CreateList(SchemeParser.DatumOrPairContext[] elements)
         {
-            if (elements.Count() == 0)
+            if (elements.Length == 0)
                 return AtomHelper.Nil;
-            else
-                return AtomHelper.CreateCons(
-                    elements.First(), 
-                    (ISExpression)CreateList(elements.Skip(1)));
+
+            if (elements.First().datum() == null)
+                return CreatePair(elements.First().pair());
+
+            return AtomHelper.CreateCons((ISExpression)Visit(elements.First()), (ISExpression)CreateList(elements.Skip(1).ToArray()));
+        }
+
+        private object CreatePair(SchemeParser.PairContext context)
+        {
+            var elements = context.datum().ToArray();
+            return AtomHelper.CreateCons((ISExpression)Visit(elements[0]), (ISExpression)Visit(elements[1]));
         }
 
         public override object VisitNum([NotNull] SchemeParser.NumContext context)

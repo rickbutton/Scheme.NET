@@ -37,7 +37,7 @@ namespace Scheme.NET.Scheme
             if (Parent != null)
                 return Parent.Lookup(sym);
 
-            throw new InvalidOperationException("cannot reference undefined identifier");
+            throw new InvalidOperationException($"cannot reference undefined identifier '{sym.String()}'");
         }
 
         public bool IsDefinedHere(SymbolAtom sym) { return Data.ContainsKey(sym); }

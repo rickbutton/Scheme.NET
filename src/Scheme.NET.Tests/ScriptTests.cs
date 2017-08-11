@@ -34,9 +34,9 @@ namespace Scheme.NET.Tests
                 if (result == null)
                     continue;
 
-                if (result != AtomHelper.True)
+                if (result.IsString())
                 {
-                    errors += result.String();
+                    errors += result.String() + "\n";
                 }
             }
             if (errors != "")
@@ -47,17 +47,25 @@ namespace Scheme.NET.Tests
         {
             var arr = args.ToArray();
 
-            var actual = arr[0];
-            var expected = arr[1];
+            var actual = arr[1];
+            var expected = arr[0];
 
-            var actualResult = Evaluator.Eval(scope, actual);
-            var expectedResult = Evaluator.Eval(scope, expected);
+            try
+            {
 
-            if (actualResult.Equals(expectedResult))
-                return AtomHelper.True;
+                var actualResult = Evaluator.Eval(scope, actual);
+                var expectedResult = Evaluator.Eval(scope, expected);
 
-            return AtomHelper.StringFromString(
-                $"[FAIL] expected [ {expected.String()} ], but result of [ {actual.String()} ] was [ {actualResult.String()} ]");
+                if (actualResult.Equals(expectedResult))
+                    return AtomHelper.True;
+
+                return AtomHelper.StringFromString(
+                    $"[FAIL] expected [ {expected.String()} ], but result of [ {actual.String()} ] was [ {actualResult.String()} ]");
+            } catch (Exception e)
+            {
+                return AtomHelper.StringFromString(
+                       $"[FAIL] expected [ {expected.String()} ], but result of [ {actual.String()} ] was exception [ {e.Message} ]");
+            }
         }
     }
 }

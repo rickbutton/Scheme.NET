@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace Scheme.NET.Scheme
         public static bool IsList(this ISExpression sexpr)
         {
             var c = sexpr as Cons;
-            return c.IsNil() || 
+            return sexpr.IsNil() || 
                 (c != null && (c.Cdr.IsNil() || c.Cdr.IsList()));
         }
 
@@ -51,6 +52,23 @@ namespace Scheme.NET.Scheme
 
             if (s != AtomHelper.Nil)
                 throw new InvalidOperationException("list is not flat");
+
+            return ss;
+        }
+
+        public static IEnumerable<ISExpression> FlattenImproper(this ISExpression s)
+        {
+            var ss = new List<ISExpression>();
+
+            var ok = s is Cons;
+            while (ok)
+            {
+                var c = s as Cons;
+                ss.Add(c.Car);
+                s = c.Cdr;
+                ok = s is Cons;
+            }
+            ss.Add(s);
 
             return ss;
         }

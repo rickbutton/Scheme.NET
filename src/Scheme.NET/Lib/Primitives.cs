@@ -1,4 +1,5 @@
-﻿using Scheme.NET.Scheme;
+﻿using Scheme.NET.Eval;
+using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,35 +57,75 @@ namespace Scheme.NET.Lib
             return AtomHelper.False;
         }
 
+        private enum LambdaType { List, Variable, ManyVar }
+
         public static ISExpression Lambda(Scope scope, IEnumerable<ISExpression> args)
         {
             LibHelper.EnsureMinArgCount(args, 2);
-            LibHelper.EnsureList(args, 0);
 
-            var formals = args.First().Flatten();
+            var formals = args.First();
             var body = args.Skip(1);
             var evalScopeParent = new Scope(scope);
+            LambdaType lambdaType;
 
-            foreach (var f in formals)
+            if (formals.IsList())
             {
-                if (!f.IsSymbol())
+                var flattened = formals.Flatten();
+                foreach (var f in flattened)
                 {
-                    throw new InvalidOperationException("invalid lambda parameter specification");
+                    if (!f.IsSymbol())
+                    {
+                        throw new InvalidOperationException("invalid lambda parameter specification");
+                    }
                 }
+                lambdaType = LambdaType.List;
             }
+            else if (formals.IsSymbol())
+            {
+                lambdaType = LambdaType.Variable;
+            }
+            else if (IsManyVarList(formals))
+            {
+                lambdaType = LambdaType.ManyVar;
+            }
+            else
+                throw new InvalidOperationException("invalid lambda parameter specification");
 
             Func<Scope, IEnumerable<ISExpression>, ISExpression> func = (s, a) =>
             {
                 var evalScope = new Scope(evalScopeParent);
-                var fa = formals.ToArray();
-                var aa = a.ToArray();
 
-                if (fa.Length != aa.Length)
-                    throw new InvalidOperationException("invalid number of arguments to lambda");
-
-                for (var i = 0; i < fa.Length; i++)
+                if (lambdaType == LambdaType.List)
                 {
-                    evalScope.Define(fa[i] as SymbolAtom, aa[i]);
+                    var flattened = formals.Flatten();
+                    var fa = flattened.ToArray();
+                    var aa = a.ToArray();
+
+                    if (fa.Length != aa.Length)
+                        throw new InvalidOperationException("invalid number of arguments to lambda");
+
+                    for (var i = 0; i < fa.Length; i++)
+                    {
+                        evalScope.Define(fa[i] as SymbolAtom, aa[i]);
+                    }
+                }
+                else if (lambdaType == LambdaType.Variable)
+                {
+                    evalScope.Define(formals as SymbolAtom, a.Unflatten());
+                }
+                else if (lambdaType == LambdaType.ManyVar)
+                {
+                    var fa = formals.FlattenImproper().ToArray();
+                    var aa = a.ToArray();
+
+                    if (aa.Length < fa.Length - 1)
+                        throw new InvalidOperationException("invalid number of arguments to lambda");
+
+                    for (var i = 0; i < fa.Length - 1; i++)
+                    {
+                        evalScope.Define(fa[i] as SymbolAtom, aa[i]);
+                    }
+                    evalScope.Define(fa[fa.Length - 1] as SymbolAtom, aa.Skip(fa.Length - 1).Unflatten());
                 }
 
                 ISExpression result = AtomHelper.Nil;
