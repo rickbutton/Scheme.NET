@@ -69,10 +69,5 @@ namespace Scheme.NET.VirtualMachine.Instructions
             }
             return map;
         }
-
-        internal override string Serialize(int nest)
-        {
-            return $"(apply)";
-        }
     }
 }

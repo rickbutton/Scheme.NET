@@ -18,9 +18,9 @@ namespace Scheme.NET.VirtualMachine.Instructions
             Next = next;
         }
 
-        internal override string Serialize(int nest)
+        public override string ToString()
         {
-            return $"(refer {Var.String()}\n{NestInstr(Next, nest)})";
+            return $"(refer {Var.String()})";
         }
 
         public override IInstruction Execute(ISchemeVM vm)

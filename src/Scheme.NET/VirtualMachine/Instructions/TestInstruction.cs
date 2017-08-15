@@ -18,11 +18,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
             Else = e;
         }
 
-        internal override string Serialize(int nest)
-        {
-            return $"(test \n{NestInstr(Then, nest)}\n{NestInstr(Else, nest)})";
-        }
-
         public override IInstruction Execute(ISchemeVM vm)
         {
             if (vm.A == AtomHelper.True)

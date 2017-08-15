@@ -18,10 +18,5 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
             return frame.X;
         }
-
-        internal override string Serialize(int nest)
-        {
-            return "(return)";
-        }
     }
 }

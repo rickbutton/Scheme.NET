@@ -7,8 +7,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
     public interface IInstruction
     {
         string Name { get; }
-
-        string Serialize();
         IInstruction Execute(ISchemeVM vm);
     }
 }

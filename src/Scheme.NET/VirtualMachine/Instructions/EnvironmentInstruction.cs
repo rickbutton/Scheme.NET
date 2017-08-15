@@ -18,11 +18,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
             Next = next;
         }
 
-        internal override string Serialize(int nest)
-        {
-            return $"(environment \n{NestInstr(Next, nest)})";
-        }
-
         public override IInstruction Execute(ISchemeVM vm)
         {
             SetE(vm, NewEnv());

@@ -10,16 +10,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
     {
         public abstract string Name { get; }
 
-        public string Serialize() { return Serialize(0); }
-
-        internal abstract string Serialize(int nest);
-
-        protected string NestInstr(IInstruction i, int n)
-        {
-            var pad = "".PadLeft(n + 4);
-            return string.Join("\n", i.Serialize().Split('\n').Select(ss => pad + ss));
-        }
-
         public abstract IInstruction Execute(ISchemeVM vm);
 
         protected ISExpression Lookup(ISExpression v, IEnvironment e)
@@ -76,6 +66,11 @@ namespace Scheme.NET.VirtualMachine.Instructions
         protected void ThrowErr(string context, string msg, string rep)
         {
             throw new SchemeRuntimeException(context, msg, rep);
+        }
+
+        public override string ToString()
+        {
+            return $"({Name})";
         }
     }
 }

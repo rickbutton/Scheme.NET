@@ -18,11 +18,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
             Ret = ret;
         }
 
-        internal override string Serialize(int nest)
-        {
-            return $"(frame \n{NestInstr(Next, nest)}\n{NestInstr(Ret, nest)})";
-        }
-
         public override IInstruction Execute(ISchemeVM vm)
         {
             PushFrame(vm, Ret, vm.E, vm.R, vm.S);

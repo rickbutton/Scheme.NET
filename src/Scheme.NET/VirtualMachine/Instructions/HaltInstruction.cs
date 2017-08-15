@@ -12,10 +12,5 @@ namespace Scheme.NET.VirtualMachine.Instructions
         {
             return null;
         }
-
-        internal override string Serialize(int nest)
-        {
-            return "(halt)";
-        }
     }
 }

@@ -18,9 +18,9 @@ namespace Scheme.NET.VirtualMachine.Instructions
             Var = var;
         }
 
-        internal override string Serialize(int nest)
+        public override string ToString()
         {
-            return $"(nuate STACKHERE\n{Var.String()})";
+            return $"(nuate {Var.String()})";
         }
 
         public override IInstruction Execute(ISchemeVM vm)
