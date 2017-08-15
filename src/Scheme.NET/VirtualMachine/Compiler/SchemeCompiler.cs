@@ -37,6 +37,10 @@ namespace Scheme.NET.VirtualMachine.Compiler
             {
                 return CompileCons(expr, next);
             }
+            else if (expr.IsProcedure())
+            {
+                return new NativeInstruction(expr as Procedure, new ReturnInstruction());
+            }
 
             return new ConstantInstruction(expr, next);
         }

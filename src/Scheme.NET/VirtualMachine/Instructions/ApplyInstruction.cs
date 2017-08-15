@@ -31,16 +31,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
                 SetE(vm, e);
                 return c.Body;
             }
-            else if (vm.A.IsProcedure())
-            {
-                var p = vm.A as Procedure;
-
-                p.EnsureArgsValid(vm.R);
-
-                SetA(vm, p.Proc(vm.R));
-                SetR(vm, new Stack<ISExpression>());
-                return new ReturnInstruction();
-            }
             ThrowErr("apply", "attempted application of non-function", $"({vm.A.String()})");
             return null;
         }

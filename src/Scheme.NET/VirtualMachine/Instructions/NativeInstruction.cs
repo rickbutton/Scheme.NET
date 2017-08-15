@@ -1,26 +1,29 @@
 ﻿using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Scheme.NET.VirtualMachine.Instructions
 {
-    public class FrameInstruction : InstructionBase
+    public class NativeInstruction : InstructionBase
     {
-        public override string Name => "frame";
+        public override string Name => "native";
 
-        public IInstruction Ret { get; private set; }
+        public Procedure Proc { get; private set; }
         public IInstruction Next { get; private set; }
 
-        public FrameInstruction(IInstruction ret, IInstruction next)
+        public NativeInstruction(Procedure proc, IInstruction next)
         {
+            Proc = proc;
             Next = next;
-            Ret = ret;
         }
 
         public override IInstruction Execute(ISchemeVM vm)
         {
-            PushFrame(vm, Ret, vm.E, vm.R, vm.S);
+            Proc.EnsureArgsValid(vm.R);
+
+            SetA(vm, Proc.Proc(vm.R));
             SetR(vm, new Stack<ISExpression>());
             return Next;
         }
