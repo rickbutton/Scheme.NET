@@ -81,7 +81,7 @@ namespace Scheme.NET.VirtualMachine.Natives
             return dict;
         }
 
-        private static void AddFunction(IDictionary<SymbolAtom, ISExpression> d, string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> p)
+        private static void AddFunction(IDictionary<SymbolAtom, ISExpression> d, string name, Func<IEnumerable<ISExpression>, ISExpression> p)
         {
             d[AtomHelper.SymbolFromString(name)] = AtomHelper.CreateProcedure(name, p, false);
         }
@@ -91,7 +91,7 @@ namespace Scheme.NET.VirtualMachine.Natives
             d[AtomHelper.SymbolFromString(name)] = p;
         }
 
-        private static void AddPrimitive(IDictionary<SymbolAtom, ISExpression> d, string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> p)
+        private static void AddPrimitive(IDictionary<SymbolAtom, ISExpression> d, string name, Func<IEnumerable<ISExpression>, ISExpression> p)
         {
             d[AtomHelper.SymbolFromString(name)] = AtomHelper.CreateProcedure(name, p, true);
         }

@@ -13,7 +13,7 @@ namespace Scheme.NET.VirtualMachine.Natives
     {
         [AllNumbers]
         [MinCount(2)]
-        public static ISExpression Equal(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Equal(IEnumerable<ISExpression> args)
         {
             var first = args.First() as NumberAtom;
 
@@ -22,28 +22,28 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression IsIncreasing(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsIncreasing(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.IsIncreasingMontonically());
         }
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression IsDecreasing(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsDecreasing(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.IsDecreasingMontonically());
         }
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression IsNonIncreasing(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsNonIncreasing(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.IsDecreasingOrEqualMontonically());
         }
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression IsNonDecreasing(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsNonDecreasing(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.IsIncreasingOrEqualMontonically());
         }

@@ -37,7 +37,7 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
                 p.EnsureArgsValid(vm.R);
 
-                SetA(vm, p.Proc(vm.E.Scope, vm.R));
+                SetA(vm, p.Proc(vm.R));
                 SetR(vm, new Stack<ISExpression>());
                 return new ReturnInstruction();
             }

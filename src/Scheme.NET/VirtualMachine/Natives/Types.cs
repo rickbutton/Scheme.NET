@@ -12,52 +12,52 @@ namespace Scheme.NET.VirtualMachine.Natives
     public static class Types
     {
         [Count(1)]
-        public static ISExpression IsBoolean(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsBoolean(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsBoolean());
         }
 
         [Count(1)]
-        public static ISExpression IsPair(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsPair(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsCons());
         }
 
         [Count(1)]
-        public static ISExpression IsSymbol(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsSymbol(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsSymbol());
         }
 
         [Count(1)]
-        public static ISExpression IsNumber(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsNumber(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsNumber());
         }
 
         [Count(1)]
-        public static ISExpression IsInteger(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsInteger(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsInteger());
         }
 
         [Count(1)]
-        public static ISExpression IsRational(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsRational(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsRational());
         }
 
         [Count(1)]
-        public static ISExpression IsReal(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsReal(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsReal());
         }
 
         [Count(1)]
-        public static ISExpression IsComplex(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsComplex(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsComplex());
@@ -65,7 +65,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(1)]
         [AllNumbers]
-        public static ISExpression IsExact(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsExact(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsNumber() && n.Val.IsExact);
@@ -73,39 +73,39 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(1)]
         [AllNumbers]
-        public static ISExpression IsInexact(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsInexact(IEnumerable<ISExpression> args)
         {
             var n = args.First() as NumberAtom;
             return AtomHelper.BooleanFromBool(args.First().IsNumber() && !n.Val.IsExact);
         }
 
         [Count(1)]
-        public static ISExpression IsChar(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsChar(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsChar());
         }
 
         [Count(1)]
-        public static ISExpression IsString(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsString(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsString());
         }
 
         [Count(1)]
-        public static ISExpression IsProcedure(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsProcedure(IEnumerable<ISExpression> args)
         {
             var f = args.First();
             return AtomHelper.BooleanFromBool(f.IsProcedure() || f.IsClosure());
         }
 
         [Count(1)]
-        public static ISExpression IsNil(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression IsNil(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.First().IsNil());
         }
 
         [Count(2)]
-        public static ISExpression Eqv(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Eqv(IEnumerable<ISExpression> args)
         {
             var a = args.ToArray()[0];
             var b = args.ToArray()[1];
@@ -140,7 +140,7 @@ namespace Scheme.NET.VirtualMachine.Natives
         }
 
         [Count(2)]
-        public static ISExpression Equal(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Equal(IEnumerable<ISExpression> args)
         {
 
             var a = args.ToArray()[0];
@@ -156,7 +156,7 @@ namespace Scheme.NET.VirtualMachine.Natives
             }
             else
             {
-                return Eqv(scope, args);
+                return Eqv(args);
             }
 
         }

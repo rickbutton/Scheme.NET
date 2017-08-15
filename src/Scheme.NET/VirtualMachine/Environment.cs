@@ -6,28 +6,49 @@ using System.Text;
 
 namespace Scheme.NET.VirtualMachine
 {
-    public class Environment : IEnvironment
+    public partial class Environment : IEnvironment
     {
-        public Scope Scope { get; private set; }
+        public IDictionary<SymbolAtom, EnvThunk> Map { get; private set; }
 
         public Environment()
         {
-            Scope = new Scope();
+            Map = new Dictionary<SymbolAtom, EnvThunk>();
+        }
+
+        public Environment(IDictionary<SymbolAtom, ISExpression> vars)
+        {
+            Map = new Dictionary<SymbolAtom, EnvThunk>();
+            foreach (var v in vars)
+            {
+                Map[v.Key] = new EnvThunk() { Val = v.Value };
+            }
+        }
+
+        public Environment(IEnvironment e)
+        {
+            Map = new Dictionary<SymbolAtom, EnvThunk>();
+            foreach (var v in e.Map)
+            {
+                Map[v.Key] = v.Value;
+            }
         }
 
         public Environment(IEnvironment e, IDictionary<SymbolAtom, ISExpression> vars)
         {
-            Scope = new Scope(e.Scope);
-
+            Map = new Dictionary<SymbolAtom, EnvThunk>();
+            foreach (var v in e.Map)
+            {
+                Map[v.Key] = v.Value;
+            }
             foreach (var v in vars)
             {
-                Scope.DefineHere(v.Key as SymbolAtom, v.Value);
+                Map[v.Key] = new EnvThunk() { Val = v.Value };
             }
         }
 
         public bool IsDefined(ISExpression sym)
         {
-            return Scope.IsDefined(sym as SymbolAtom);
+            return Map.ContainsKey(sym as SymbolAtom);
         }
 
         public ISExpression Lookup(ISExpression sym)
@@ -35,17 +56,27 @@ namespace Scheme.NET.VirtualMachine
             if (!sym.IsSymbol())
                 throw new InvalidOperationException();
 
-            return Scope.Lookup(sym as SymbolAtom);
+            if (IsDefined(sym))
+                return Map[sym as SymbolAtom].Val;
+
+            return null;
         }
 
         public bool Set(ISExpression sym, ISExpression val)
         {
-            return Scope.Set((SymbolAtom)sym, val);
+            var s = sym as SymbolAtom;
+            if (Map.ContainsKey(s))
+            {
+                Map[s].Val = val;
+                return true;
+            }
+            return false;
         }
 
         public void DefineHere(ISExpression sym, ISExpression val)
         {
-            Scope.DefineHere((SymbolAtom)sym, val);
+            var s = sym as SymbolAtom;
+            Map[s] = new EnvThunk() { Val = val };
         }
     }
 }

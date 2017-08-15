@@ -62,6 +62,7 @@ namespace Scheme.NET.VirtualMachine
             {
                 while (x != null)
                 {
+                    Console.WriteLine(x.Name);
                     x = x.Execute(this);
                 }
                 success = true;

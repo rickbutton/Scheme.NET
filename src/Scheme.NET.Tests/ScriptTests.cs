@@ -46,7 +46,7 @@ namespace Scheme.NET.Tests
                 Assert.Fail(errors);
         }
 
-        private ISExpression Test(Scope scope, IEnumerable<ISExpression> args)
+        private ISExpression Test(IEnumerable<ISExpression> args)
         {
             var arr = args.ToArray();
 

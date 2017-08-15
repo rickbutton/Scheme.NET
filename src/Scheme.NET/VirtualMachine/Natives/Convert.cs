@@ -16,7 +16,7 @@ namespace Scheme.NET.VirtualMachine.Natives
         [MinCount(1)]
         [MaxCount(2)]
         [AllNumbers]
-        public static ISExpression NumberToString(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression NumberToString(IEnumerable<ISExpression> args)
         {
             int radix = 10;
             if (args.Count() > 1)

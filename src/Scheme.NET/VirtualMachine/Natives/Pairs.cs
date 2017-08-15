@@ -12,7 +12,7 @@ namespace Scheme.NET.VirtualMachine.Natives
     {
 
         [Count(2)]
-        public static ISExpression Cons(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Cons(IEnumerable<ISExpression> args)
         {
             var a = args.ToArray();
             return AtomHelper.CreateCons(a[0], a[1]);
@@ -20,7 +20,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(1)]
         [AllCons]
-        public static ISExpression Car(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Car(IEnumerable<ISExpression> args)
         {
             var c = args.First() as Cons;
             return c.Car;
@@ -28,7 +28,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(1)]
         [AllCons]
-        public static ISExpression Cdr(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Cdr(IEnumerable<ISExpression> args)
         {
             var c = args.First() as Cons;
             return c.Cdr;
@@ -36,7 +36,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(2)]
         [Cons(0)]
-        public static ISExpression SetCar(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression SetCar(IEnumerable<ISExpression> args)
         {
             var c = args.First() as Cons;
             c.Car = args.ToArray()[1];
@@ -45,7 +45,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [Count(2)]
         [Cons(0)]
-        public static ISExpression SetCdr(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression SetCdr(IEnumerable<ISExpression> args)
         {
             var c = args.First() as Cons;
             c.Cdr = args.ToArray()[1];

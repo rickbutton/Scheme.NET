@@ -158,6 +158,7 @@ namespace Scheme.NET.VirtualMachine.Compiler
 
                 var e = x.Get(1);
                 var c = new ContiInstruction(new ArgumentInstruction(Compile(e, new ApplyInstruction())));
+
                 // tail?
                 if (next.Name == "return")
                     return c;

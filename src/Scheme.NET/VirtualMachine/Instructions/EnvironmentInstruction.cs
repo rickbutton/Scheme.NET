@@ -7,7 +7,7 @@ namespace Scheme.NET.VirtualMachine.Instructions
 {
     public class EnvironmentInstruction : InstructionBase
     {
-        public override string Name => "assign";
+        public override string Name => "environment";
 
         public bool Populate { get; private set; }
         public IInstruction Next { get; private set; }

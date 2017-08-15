@@ -195,7 +195,7 @@ namespace Scheme.NET.Scheme
 
         public static Vector CreateVector(IEnumerable<ISExpression> items) { return new Vector(items.ToArray()); }
         public static Cons CreateCons(ISExpression car, ISExpression cdr) { return new Cons(car, cdr); }
-        public static Procedure CreateProcedure(string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> proc, bool primitive) { return new Procedure(name, proc, primitive); }
+        public static Procedure CreateProcedure(string name, Func<IEnumerable<ISExpression>, ISExpression> proc, bool primitive) { return new Procedure(name, proc, primitive); }
 
         public static ISExpression CreateList(params ISExpression[] exprs)
         {

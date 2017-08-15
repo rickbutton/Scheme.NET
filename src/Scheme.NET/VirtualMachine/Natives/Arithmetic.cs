@@ -12,20 +12,20 @@ namespace Scheme.NET.VirtualMachine.Natives
     public static class Arithmetic
     {
         [AllNumbers]
-        public static ISExpression Plus(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Plus(IEnumerable<ISExpression> args)
         {
             return args.Cast<NumberAtom>().Sum();
         }
 
         [AllNumbers]
-        public static ISExpression Mul(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Mul(IEnumerable<ISExpression> args)
         {
             return args.Cast<NumberAtom>().Multiply();
         }
 
         [AllNumbers]
         [MinCount(1)]
-        public static ISExpression Minus(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Minus(IEnumerable<ISExpression> args)
         {
 
             if (args.Count() == 1)
@@ -41,7 +41,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllNumbers]
         [MinCount(1)]
-        public static ISExpression Div(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Div(IEnumerable<ISExpression> args)
         {
             if (args.Count() == 1)
                 return AtomHelper.NumberFromComplex(Complex.CreateExactReal(1) / (args.First() as NumberAtom).Val);
@@ -56,28 +56,28 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllNumbers]
         [Count(1)]
-        public static ISExpression Zero(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Zero(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.IsZero);
         }
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Positive(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Positive(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive);
         }
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Negative(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Negative(IEnumerable<ISExpression> args)
         {
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative);
         }
 
         [AllIntegers]
         [Count(1)]
-        public static ISExpression Odd(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Odd(IEnumerable<ISExpression> args)
         {
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
@@ -86,7 +86,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllIntegers]
         [Count(1)]
-        public static ISExpression Even(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Even(IEnumerable<ISExpression> args)
         {
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
@@ -95,7 +95,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression Min(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Min(IEnumerable<ISExpression> args)
         {
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
             return AtomHelper.NumberFromComplex(nums.Min());
@@ -103,7 +103,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [MinCount(2)]
-        public static ISExpression Max(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Max(IEnumerable<ISExpression> args)
         {
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
             return AtomHelper.NumberFromComplex(nums.Max());
@@ -111,14 +111,14 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Abs(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Abs(IEnumerable<ISExpression> args)
         {
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealAbs());
         }
 
         [AllReals]
         [Count(2)]
-        public static ISExpression Quotient(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Quotient(IEnumerable<ISExpression> args)
         {
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0];
@@ -138,7 +138,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [Count(2)]
-        public static ISExpression Remainder(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Remainder(IEnumerable<ISExpression> args)
         {
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0];
@@ -150,7 +150,7 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [Count(2)]
-        public static ISExpression Modulo(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Modulo(IEnumerable<ISExpression> args)
         {
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0].Val;
@@ -161,7 +161,7 @@ namespace Scheme.NET.VirtualMachine.Natives
         }
 
         [AllIntegers]
-        public static ISExpression Gcd(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Gcd(IEnumerable<ISExpression> args)
         {
             if (!args.Any())
                 return AtomHelper.NumberFromComplex(0);
@@ -172,7 +172,7 @@ namespace Scheme.NET.VirtualMachine.Natives
         }
 
         [AllIntegers]
-        public static ISExpression Lcm(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Lcm(IEnumerable<ISExpression> args)
         {
             if (args.Count() == 0)
                 return AtomHelper.NumberFromComplex(1);
@@ -183,28 +183,28 @@ namespace Scheme.NET.VirtualMachine.Natives
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Floor(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Floor(IEnumerable<ISExpression> args)
         {
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealFloor());
         }
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Ceiling(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Ceiling(IEnumerable<ISExpression> args)
         {
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealCeiling());
         }
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Truncate(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Truncate(IEnumerable<ISExpression> args)
         {
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealTruncate());
         }
 
         [AllReals]
         [Count(1)]
-        public static ISExpression Round(Scope scope, IEnumerable<ISExpression> args)
+        public static ISExpression Round(IEnumerable<ISExpression> args)
         {
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealRound());
         }
