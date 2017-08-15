@@ -49,6 +49,8 @@ namespace Scheme.NET.VirtualMachine
                 AtomHelper.CreateList(AtomHelper.SymbolFromString("lambda"), AtomHelper.Nil, p)
                 );
 
+            def = AtomHelper.CreateList(AtomHelper.SymbolFromString("define"), AtomHelper.SymbolFromString(name), p);
+
             var c = SchemeCompiler.Compile(def);
             Execute(c);
         }

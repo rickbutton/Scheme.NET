@@ -12,11 +12,11 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
         public override IInstruction Execute(ISchemeVM vm)
         {
-            var c = vm.A as Closure;
             IEnvironment e = vm.E;
 
-            if (c != null)
+            if (vm.A.IsClosure())
             {
+                var c = vm.A as Closure;
                 if (c.Vars.IsSymbol())
                 {
                     e = Extend(vm.E, CreateMap(AtomHelper.CreateList(c.Vars), vm.R));
@@ -30,6 +30,16 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
                 SetE(vm, e);
                 return c.Body;
+            }
+            else if (vm.A.IsProcedure())
+            {
+                var p = vm.A as Procedure;
+
+                p.EnsureArgsValid(vm.R);
+
+                SetA(vm, p.Proc(vm.E.Scope, vm.R));
+                SetR(vm, new Stack<ISExpression>());
+                return new ReturnInstruction();
             }
             ThrowErr("apply", "attempted application of non-function", $"({vm.A.String()})");
             return null;

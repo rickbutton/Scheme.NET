@@ -29,10 +29,6 @@ namespace Scheme.NET.VirtualMachine.Compiler
 
         public static IInstruction Compile(ISExpression expr, IInstruction next)
         {
-            if (expr.IsProcedure())
-            {
-                return new NativeInstruction(expr as Procedure, next);
-            }
             if (expr.IsSymbol())
             {
                 return new ReferInstruction(expr, next);

@@ -16,7 +16,7 @@ namespace Scheme.NET.Scheme
         public static bool IsSymbol(this ISExpression sexpr) { return sexpr is SymbolAtom; }
         public static bool IsString(this ISExpression sexpr) { return sexpr is StringAtom; }
         public static bool IsChar(this ISExpression sexpr) { return sexpr is CharAtom; }
-        public static bool IsProcedure(this ISExpression sexpr) { return sexpr.IsClosure() || sexpr is Procedure; }
+        public static bool IsProcedure(this ISExpression sexpr) { return sexpr is Procedure; }
         public static bool IsClosure(this ISExpression sexpr) { return sexpr is Closure; }
         public static bool IsCons(this ISExpression sexpr) { return sexpr is Cons; }
         public static bool IsVector(this ISExpression sexpr) { return sexpr is Vector; }

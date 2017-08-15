@@ -94,7 +94,8 @@ namespace Scheme.NET.VirtualMachine.Natives
         [Count(1)]
         public static ISExpression IsProcedure(Scope scope, IEnumerable<ISExpression> args)
         {
-            return AtomHelper.BooleanFromBool(args.First().IsProcedure());
+            var f = args.First();
+            return AtomHelper.BooleanFromBool(f.IsProcedure() || f.IsClosure());
         }
 
         [Count(1)]

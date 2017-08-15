@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Scheme.NET.VirtualMachine.Natives.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +23,18 @@ namespace Scheme.NET.Scheme
         }
 
         public string String() { return Name; }
+
+        public void EnsureArgsValid(IEnumerable<ISExpression> args)
+        {
+            var methodInfo = Proc.GetMethodInfo();
+
+            var attrs = methodInfo.GetCustomAttributes<ArgAttribute>(true);
+
+            foreach (var a in attrs)
+            {
+                a.Validate(args);
+            }
+        }
 
         public bool Equals(ISExpression other)
         {
