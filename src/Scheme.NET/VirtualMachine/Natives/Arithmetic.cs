@@ -5,27 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scheme.NET.Numbers;
+using Scheme.NET.VirtualMachine.Natives.Attributes;
 
-namespace Scheme.NET.Lib
+namespace Scheme.NET.VirtualMachine.Natives
 {
     public static class Arithmetic
     {
+        [AllNumbers]
         public static ISExpression Plus(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
             return args.Cast<NumberAtom>().Sum();
         }
 
+        [AllNumbers]
         public static ISExpression Mul(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
             return args.Cast<NumberAtom>().Multiply();
         }
 
+        [AllNumbers]
+        [MinCount(1)]
         public static ISExpression Minus(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
-            LibHelper.EnsureMinArgCount(args, 1);
 
             if (args.Count() == 1)
                 return AtomHelper.NumberFromComplex(-((NumberAtom) args.First()).Val);
@@ -38,11 +39,10 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(v);
         }
 
+        [AllNumbers]
+        [MinCount(1)]
         public static ISExpression Div(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
-            LibHelper.EnsureMinArgCount(args, 1);
-
             if (args.Count() == 1)
                 return AtomHelper.NumberFromComplex(Complex.CreateExactReal(1) / (args.First() as NumberAtom).Val);
 
@@ -54,75 +54,72 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(v);
         }
 
+        [AllNumbers]
+        [Count(1)]
         public static ISExpression Zero(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.IsZero);
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Positive(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsPositive);
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Negative(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().First().Val.Real.IsNegative);
         }
 
+        [AllIntegers]
+        [Count(1)]
         public static ISExpression Odd(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllInteger(args);
-            LibHelper.EnsureArgCount(args, 1);
-
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
             return AtomHelper.BooleanFromBool(n.IsOdd);
         }
 
+        [AllIntegers]
+        [Count(1)]
         public static ISExpression Even(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllInteger(args);
-            LibHelper.EnsureArgCount(args, 1);
-
             var n = args.Cast<NumberAtom>().First().Val.Real;
 
             return AtomHelper.BooleanFromBool(n.IsEven || n.IsZero);
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression Min(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
             return AtomHelper.NumberFromComplex(nums.Min());
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression Max(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
             var nums = args.Cast<NumberAtom>().Select(n => n.Val);
             return AtomHelper.NumberFromComplex(nums.Max());
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Abs(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealAbs());
         }
 
+        [AllReals]
+        [Count(2)]
         public static ISExpression Quotient(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 2);
-
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0];
             var b = array[1];
@@ -139,11 +136,10 @@ namespace Scheme.NET.Lib
             }
         }
 
+        [AllReals]
+        [Count(2)]
         public static ISExpression Remainder(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 2);
-
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0];
             var b = array[1];
@@ -152,11 +148,10 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(c);
         }
 
+        [AllReals]
+        [Count(2)]
         public static ISExpression Modulo(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 2);
-
             var array = args.Cast<NumberAtom>().ToArray();
             var a = array[0].Val;
             var b = array[1].Val;
@@ -165,9 +160,9 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(c);
         }
 
+        [AllIntegers]
         public static ISExpression Gcd(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllInteger(args);
             if (!args.Any())
                 return AtomHelper.NumberFromComplex(0);
 
@@ -176,9 +171,9 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(GCD(nums).RealAbs());
         }
 
+        [AllIntegers]
         public static ISExpression Lcm(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllInteger(args);
             if (args.Count() == 0)
                 return AtomHelper.NumberFromComplex(1);
 
@@ -186,31 +181,31 @@ namespace Scheme.NET.Lib
             return AtomHelper.NumberFromComplex(LCM(nums).RealAbs());
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Floor(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealFloor());
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Ceiling(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealCeiling());
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Truncate(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealTruncate());
         }
 
+        [AllReals]
+        [Count(1)]
         public static ISExpression Round(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureArgCount(args, 1);
             return AtomHelper.NumberFromComplex(args.Cast<NumberAtom>().First().Val.RealRound());
         }
 

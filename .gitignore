@@ -3,7 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-src/Scheme.NET/Parser/*
+src/Scheme.NET/Parser/Scheme*.cs
+src/Scheme.NET/Parser/*.tokens
 
 # User-specific files
 *.suo

@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using Scheme.NET.Eval;
-using Scheme.NET.Lib;
 using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
@@ -66,15 +64,15 @@ namespace Scheme.NET.Tests.ProcedureTests
         [Test]
         public void TestLocs()
         {
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a2"), Eval("(1 . 3)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a3"), Eval("(1 . 2)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b2"), Eval("\"testa\""));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b3"), Eval("\"test\""));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c2"), Eval("#(1 3)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c3"), Eval("#(1 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("a2"), Eval("(1 . 3)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("a3"), Eval("(1 . 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("b2"), Eval("\"testa\""));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("b3"), Eval("\"test\""));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("c2"), Eval("#(1 3)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("c3"), Eval("#(1 2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? a a)"));
             Assert.AreEqual(AtomHelper.False, Eval("(equal? a a2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(equal? a a3)"));

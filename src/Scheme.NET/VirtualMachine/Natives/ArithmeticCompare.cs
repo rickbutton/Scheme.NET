@@ -1,54 +1,50 @@
 ﻿using Scheme.NET.Numbers;
 using Scheme.NET.Scheme;
+using Scheme.NET.VirtualMachine.Natives.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scheme.NET.Lib
+namespace Scheme.NET.VirtualMachine.Natives
 {
     public static class ArithmeticCompare
     {
+        [AllNumbers]
+        [MinCount(2)]
         public static ISExpression Equal(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllNumber(args);
-            LibHelper.EnsureMinArgCount(args, 2);
-
             var first = args.First() as NumberAtom;
 
             return AtomHelper.BooleanFromBool(args.Cast<NumberAtom>().All(a => a.Val == first.Val));
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression IsIncreasing(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
-
             return AtomHelper.BooleanFromBool(args.IsIncreasingMontonically());
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression IsDecreasing(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
-
             return AtomHelper.BooleanFromBool(args.IsDecreasingMontonically());
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression IsNonIncreasing(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
-
             return AtomHelper.BooleanFromBool(args.IsDecreasingOrEqualMontonically());
         }
 
+        [AllReals]
+        [MinCount(2)]
         public static ISExpression IsNonDecreasing(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureAllReal(args);
-            LibHelper.EnsureMinArgCount(args, 2);
-
             return AtomHelper.BooleanFromBool(args.IsIncreasingOrEqualMontonically());
         }
 

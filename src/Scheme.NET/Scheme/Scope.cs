@@ -1,4 +1,4 @@
-﻿using Scheme.NET.Eval;
+﻿using Scheme.NET.VirtualMachine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +24,10 @@ namespace Scheme.NET.Scheme
             Parent = null;
         }
 
-        public ISExpression Eval(ISExpression e)
+        public Scope()
         {
-            return Evaluator.Eval(this, e);
+            Data = new Dictionary<SymbolAtom, ISExpression>();
+            Parent = null;
         }
 
         public ISExpression Lookup(SymbolAtom sym)
@@ -37,22 +38,38 @@ namespace Scheme.NET.Scheme
             if (Parent != null)
                 return Parent.Lookup(sym);
 
-            throw new InvalidOperationException($"cannot reference undefined identifier '{sym.String()}'");
+            return null;
         }
 
         public bool IsDefinedHere(SymbolAtom sym) { return Data.ContainsKey(sym); }
+        public bool IsDefined(SymbolAtom sym) {
+            if (IsDefinedHere(sym))
+            {
+                return true;
+            }
 
-        public void Define(SymbolAtom sym, ISExpression sexpr)
+            if (Parent == null)
+                return false;
+
+            return Parent.IsDefined(sym);
+        }
+
+        public void DefineHere(SymbolAtom sym, ISExpression sexpr)
         {
             Data[sym] = sexpr;
         }
 
-        public void DefineHigh(SymbolAtom sym, ISExpression sexpr)
+        public bool Set(SymbolAtom sym, ISExpression sexpr)
         {
-            if (Parent == null || IsDefinedHere(sym))
-                Define(sym, sexpr);
+            if (IsDefinedHere(sym))
+            {
+                DefineHere(sym, sexpr);
+                return true;
+            }
+            else if (Parent == null)
+                return false;
             else
-                Parent.DefineHigh(sym, sexpr);
+                return Parent.Set(sym, sexpr);
         }
 
         public Scope GetOuter()

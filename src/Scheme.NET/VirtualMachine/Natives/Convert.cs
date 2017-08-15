@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Scheme.NET.Scheme;
 using Scheme.NET.Numbers;
+using Scheme.NET.VirtualMachine.Natives.Attributes;
 
-namespace Scheme.NET.Lib
+namespace Scheme.NET.VirtualMachine.Natives
 {
     public static class Convert
     {
         private static readonly int[] ValidRadix = new int[] { 2,8,10,16 };
 
+        [MinCount(1)]
+        [MaxCount(2)]
+        [AllNumbers]
         public static ISExpression NumberToString(Scope scope, IEnumerable<ISExpression> args)
         {
-            LibHelper.EnsureMinArgCount(args, 1);
-            LibHelper.EnsureMaxArgCount(args, 2);
-            LibHelper.EnsureAllNumber(args);
-
             int radix = 10;
             if (args.Count() > 1)
             {
@@ -27,7 +27,7 @@ namespace Scheme.NET.Lib
 
             if (!ValidRadix.Contains(radix))
             {
-                LibHelper.ArgError("Invalid radix specified");
+                throw new SchemeNativeException("number->string", "invalid radix specified", radix.ToString());
             }
 
             var val = args.ToArray()[0] as NumberAtom;

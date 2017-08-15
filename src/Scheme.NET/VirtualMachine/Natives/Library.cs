@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scheme.NET.Lib
+namespace Scheme.NET.VirtualMachine.Natives
 {
     public static class Library
     {
@@ -72,11 +72,11 @@ namespace Scheme.NET.Lib
             AddFunction(dict, "set-car!", Pairs.SetCar);
             AddFunction(dict, "set-cdr!", Pairs.SetCdr);
 
-            AddPrimitive(dict, "quote", Primitives.Quote);
+            /*AddPrimitive(dict, "quote", Primitives.Quote);
             AddPrimitive(dict, "lambda", Primitives.Lambda);
             AddPrimitive(dict, "define", Primitives.Define);
             AddPrimitive(dict, "if", Primitives.If);
-            AddPrimitive(dict, "set!", Primitives.Set);
+            AddPrimitive(dict, "set!", Primitives.Set);*/
 
             return dict;
         }

@@ -7,6 +7,7 @@ using Scheme.NET.Numbers;
 using System.Text.RegularExpressions;
 using System.Numerics;
 using Complex = Scheme.NET.Numbers.Complex;
+using System.Linq.Expressions;
 
 namespace Scheme.NET.Scheme
 {
@@ -195,6 +196,18 @@ namespace Scheme.NET.Scheme
         public static Vector CreateVector(IEnumerable<ISExpression> items) { return new Vector(items.ToArray()); }
         public static Cons CreateCons(ISExpression car, ISExpression cdr) { return new Cons(car, cdr); }
         public static Procedure CreateProcedure(string name, Func<Scope, IEnumerable<ISExpression>, ISExpression> proc, bool primitive) { return new Procedure(name, proc, primitive); }
+
+        public static ISExpression CreateList(params ISExpression[] exprs)
+        {
+            if (exprs.Length == 0)
+                return Nil;
+
+            var head = CreateCons(exprs[exprs.Length - 1], AtomHelper.Nil);
+            for (var i = exprs.Length - 2; i >= 0; i--) {
+                head = CreateCons(exprs[i], head);
+            }
+            return head;
+        }
 
         public static readonly NilAtom Nil = new NilAtom();
         public static readonly BooleanAtom True = new BooleanAtom(true);

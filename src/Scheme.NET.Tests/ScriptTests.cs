@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Scheme.NET.Eval;
 using Scheme.NET.Scheme;
 using Scheme.NET.Tests.ProcedureTests;
 using System;
@@ -23,8 +22,12 @@ namespace Scheme.NET.Tests
             var path = Path.GetDirectoryName(typeof(ScriptTests).GetTypeInfo().Assembly.Location);
             var tests = File.ReadAllText(Path.Combine(path, "tests.scm"));
 
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("test"),
-                AtomHelper.CreateProcedure("test", Test, true));
+            var def = AtomHelper.CreateList(
+                            AtomHelper.SymbolFromString("define"),
+                AtomHelper.SymbolFromString("test"),
+                AtomHelper.CreateList(AtomHelper.SymbolFromString("lambda"), AtomHelper.Nil, AtomHelper.CreateProcedure("test", Test, false))
+                );
+            Eval(def);
 
             var errors = "";
             var exprs = EvalAll(tests).ToArray();
@@ -52,15 +55,11 @@ namespace Scheme.NET.Tests
 
             try
             {
-
-                var actualResult = Evaluator.Eval(scope, actual);
-                var expectedResult = Evaluator.Eval(scope, expected);
-
-                if (actualResult.Equals(expectedResult))
+                if (actual.Equals(expected))
                     return AtomHelper.True;
 
                 return AtomHelper.StringFromString(
-                    $"[FAIL] expected [ {expected.String()} ], but result of [ {actual.String()} ] was [ {actualResult.String()} ]");
+                    $"[FAIL] expected [ {expected.String()} ], but result of [ {actual.String()} ] was [ {actual.String()} ]");
             } catch (Exception e)
             {
                 return AtomHelper.StringFromString(

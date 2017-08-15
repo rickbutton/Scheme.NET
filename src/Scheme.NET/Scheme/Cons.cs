@@ -16,9 +16,12 @@ namespace Scheme.NET.Scheme
             Car = car;
             Cdr = cdr;
         }
-
+        
         public string String()
         {
+            if (Cdr == AtomHelper.Nil)
+                return $"({Car.String()})";
+
             if (this.IsList())
             {
                 return $"({Car.String()} {string.Join(" ", Cdr.Flatten().Select(c => c.String()))})";

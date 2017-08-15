@@ -9,6 +9,6 @@
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Parser\" />
+    <Folder Include="Instructions\VirtualMachine\" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using Scheme.NET.Eval;
-using Scheme.NET.Lib;
 using Scheme.NET.Scheme;
 using System;
 using System.Collections.Generic;
@@ -66,9 +64,9 @@ namespace Scheme.NET.Tests.ProcedureTests
         [Test]
         public void TestLocs()
         {
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
-            Env.GlobalScope.Define(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("a"), Eval("(1 . 2)"));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("b"), Eval("\"test\""));
+            VM.E.DefineHere(AtomHelper.SymbolFromString("c"), Eval("#(1 2)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eqv? a a)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eqv? b b)"));
             Assert.AreEqual(AtomHelper.True, Eval("(eqv? c c)"));

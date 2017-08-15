@@ -1,25 +1,16 @@
 ﻿using Antlr4.Runtime;
-using Scheme.NET.Eval;
-using Scheme.NET.Lib;
+using Scheme.NET.Parser.Visitors;
 using Scheme.NET.Scheme;
-using Scheme.NET.Visitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Scheme.NET
+namespace Scheme.NET.Parser
 {
-    public class Environment
+    public static class ParserHelpers
     {
-        public Scope GlobalScope { get; private set; }
-
-        protected Environment(IDictionary<SymbolAtom, ISExpression> initial)
-        {
-            GlobalScope = new Scope(initial);
-        }
-
-        public ISExpression[] Eval(string input)
+        public static ISExpression[] Parse(string input)
         {
             AntlrInputStream inputStream = new AntlrInputStream(input);
             SchemeLexer lexer = new SchemeLexer(inputStream);
@@ -38,14 +29,7 @@ namespace Scheme.NET
             else
                 throw new InvalidOperationException("parser error, unknown type: " + expr.GetType().Name);
 
-            arr = arr.Select(e => Evaluator.Eval(GlobalScope, e)).ToArray();
-
             return arr;
-        }
-
-        public static Environment Create()
-        {
-            return new Environment(Library.CreateBase());
         }
     }
 }
