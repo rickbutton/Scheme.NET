@@ -17,8 +17,8 @@ namespace Scheme.NET.VirtualMachine
         {
             X = x;
             E = e;
-            R = new Stack<ISExpression>(r);
-            S = new Stack<IFrame>(s);
+            R = new Stack<ISExpression>(new Stack<ISExpression>(r));
+            S = new Stack<IFrame>(new Stack<IFrame>(s));
         }
     }
 }
