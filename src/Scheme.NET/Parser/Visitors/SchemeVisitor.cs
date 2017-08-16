@@ -37,25 +37,27 @@ namespace Scheme.NET.Parser.Visitors
 
         public override object VisitList([NotNull] SchemeParser.ListContext context)
         {
-            var elements = context.datumOrPair();
+            var elements = context.datum();
 
             return CreateList(elements);
         }
 
-        private object CreateList(SchemeParser.DatumOrPairContext[] elements)
+        public override object VisitPair([NotNull] SchemeParser.PairContext context)
+        {
+            var elements = context.datum();
+            return CreatePair(elements);
+        }
+
+        private object CreateList(SchemeParser.DatumContext[] elements)
         {
             if (elements.Length == 0)
                 return AtomHelper.Nil;
 
-            if (elements.First().datum() == null)
-                return CreatePair(elements.First().pair());
-
             return AtomHelper.CreateCons((ISExpression)Visit(elements.First()), (ISExpression)CreateList(elements.Skip(1).ToArray()));
         }
 
-        private object CreatePair(SchemeParser.PairContext context)
+        private object CreatePair(SchemeParser.DatumContext[] elements)
         {
-            var elements = context.datum().ToArray();
             return AtomHelper.CreateCons((ISExpression)Visit(elements[0]), (ISExpression)Visit(elements[1]));
         }
 

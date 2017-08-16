@@ -9,10 +9,6 @@ options {
 
 // Parser rules
 
-datumOrPair : pair
-            | datum;
-
-
 datum : simpleDatum
       | compoundDatum
       ;
@@ -25,14 +21,15 @@ simpleDatum : bool
             ;
 
 compoundDatum : list
+              | pair
               | vector
               | quote
               | abbreviation
               ;
 
-list : '(' datumOrPair* ')';
+list : '(' datum* ')';
 
-pair : datum '.' datum;
+pair : '(' datum '.' datum ')';
 
 bool : TRUE              # True
      | FALSE             # False
