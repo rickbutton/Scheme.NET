@@ -152,8 +152,22 @@ namespace Scheme.NET.VirtualMachine.Compiler
                     ThrowErr("define", "invalid number of arguments", x.String());
 
                 var def_v = x.Get(1);
-                var def_expr = x.Get(2);
-                return Compile(def_expr, new DefineInstruction(def_v, next));
+
+                if (def_v.IsSymbol())
+                {
+                    var def_expr = x.Get(2);
+                    return Compile(def_expr, new DefineInstruction(def_v, next));
+                }
+                else if (def_v.IsCons())
+                {
+                    var v = def_v.GetUnsafeCar();
+                    var formals = def_v.GetUnsafeCdr();
+                    return new CloseInstruction(formals, CompileLambdaBody(x.GetUnsafeCdr().GetUnsafeCdr(), 
+                        new ReturnInstruction()), new DefineInstruction(v, next));
+                }
+
+                ThrowErr("define", "invalid argument '<variable> <formals>'", x.String());
+                return null;
             }
             else if (op == CallCC)
             {
