@@ -17,16 +17,20 @@ namespace Scheme.NET.VirtualMachine.Instructions
             if (vm.A.IsClosure())
             {
                 var c = vm.A as Closure;
-                if (c.Vars.IsSymbol())
+
+                if (c.Body.Name != "native")
                 {
-                    e = Extend(vm.E, CreateMap(AtomHelper.CreateList(c.Vars), vm.R));
+                    if (c.Vars.IsSymbol())
+                    {
+                        e = Extend(vm.E, CreateMap(AtomHelper.CreateList(c.Vars), vm.R));
+                    }
+                    else if (c.Vars.IsList())
+                    {
+                        e = Extend(vm.E, CreateMap(c.Vars, vm.R));
+                    }
+                    else if (!c.Vars.IsNil())
+                        ThrowErr("apply", "attempted application with invalid binding parameter", $"parameter vars: {c.Vars.String()}");
                 }
-                else if (c.Vars.IsList())
-                {
-                    e = Extend(vm.E, CreateMap(c.Vars, vm.R));
-                }
-                else if (!c.Vars.IsNil())
-                    ThrowErr("apply", "attempted application with invalid binding parameter", $"parameter vars: {c.Vars.String()}");
 
                 SetE(vm, e);
                 return c.Body;
@@ -43,8 +47,8 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
             // this gets weird because native needs the args
             // and we are wrapping all natives in a zero arg lambda
-            //if (vflat.Count() != rib.Count)
-            //    ThrowErr("apply", "attempted application of function with incorrect number of parameters", $"({vars.String()})");
+            if (vflat.Count() != rib.Count)
+                ThrowErr("apply", "attempted application of function with incorrect number of parameters", $"({vars.String()})");
 
             if (vars != AtomHelper.Nil)
             {
