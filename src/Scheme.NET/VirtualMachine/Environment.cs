@@ -24,15 +24,6 @@ namespace Scheme.NET.VirtualMachine
             }
         }
 
-        public Environment(IEnvironment e)
-        {
-            Map = new Dictionary<SymbolAtom, EnvThunk>();
-            foreach (var v in e.Map)
-            {
-                Map[v.Key] = v.Value;
-            }
-        }
-
         public Environment(IEnvironment e, IDictionary<SymbolAtom, ISExpression> vars)
         {
             Map = new Dictionary<SymbolAtom, EnvThunk>();
