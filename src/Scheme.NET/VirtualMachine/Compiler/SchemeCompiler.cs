@@ -18,6 +18,7 @@ namespace Scheme.NET.VirtualMachine.Compiler
         private static readonly ISExpression Define = AtomHelper.SymbolFromString("define");
         private static readonly ISExpression Eval = AtomHelper.SymbolFromString("eval");
         private static readonly ISExpression CallCC = AtomHelper.SymbolFromString("call/cc");
+        private static readonly ISExpression Begin = AtomHelper.SymbolFromString("begin");
 
         private static readonly ISExpression SchemeReportEnvironment = AtomHelper.SymbolFromString("scheme-report-environment");
         private static readonly ISExpression NullEnvironment = AtomHelper.SymbolFromString("null-environment");
@@ -110,6 +111,14 @@ namespace Scheme.NET.VirtualMachine.Compiler
                 var vars = x.Get(1);
                 var body = x.GetUnsafeCdr().GetUnsafeCdr();
                 return new CloseInstruction(vars, CompileLambdaBody(body, new ReturnInstruction()), next);
+            }
+            else if (op == Begin)
+            {
+                var body = x.Cdr;
+                if (body == AtomHelper.Nil)
+                    return new ConstantInstruction(body, next);
+
+                return CompileLambdaBody(body, next);
             }
             else if (op == If)
             {

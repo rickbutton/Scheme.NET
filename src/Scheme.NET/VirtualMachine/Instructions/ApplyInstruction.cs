@@ -45,6 +45,9 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
             var vflat = vars.Flatten();
 
+            if (vflat.Count() == 1 && vflat.First() == AtomHelper.Nil)
+                vflat = Enumerable.Empty<ISExpression>();
+
             // this gets weird because native needs the args
             // and we are wrapping all natives in a zero arg lambda
             if (vflat.Count() != rib.Count)
