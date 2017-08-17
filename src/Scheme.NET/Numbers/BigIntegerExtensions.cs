@@ -11,6 +11,9 @@ namespace Scheme.NET.Numbers
     {
         public static string ToString(this BigInteger i, int radix)
         {
+            if (radix == 10)
+                return i.ToString();
+
             var str = "";
             while (i != 0)
             {
