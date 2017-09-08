@@ -3,11 +3,17 @@
     <OutputType>exe</OutputType>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <ApplicationIcon />
     <OutputTypeEx>exe</OutputTypeEx>
     <StartupObject />
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="repl.ss" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="repl.ss" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Scheme.NET\Scheme.NET.csproj" />
   </ItemGroup>

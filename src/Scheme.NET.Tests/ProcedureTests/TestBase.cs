@@ -19,20 +19,19 @@ namespace Scheme.NET.Tests.ProcedureTests
         [SetUp]
         public void SetUp()
         {
-            var lib = Library.CreateBase();
-            VM = new SchemeVM(lib);
+            VM = new SchemeVM();
         }
 
         protected ISExpression Eval(ISExpression e)
         {
-            var a = SchemeCompiler.Compile(e);
+            var a = SchemeCompiler.Compile(VM, e);
             return VM.Execute(a);
         }
 
         protected ISExpression Eval(string input)
         {
             var arr = ParserHelpers.Parse(input);
-            var carr = arr.Select(a => SchemeCompiler.Compile(a));
+            var carr = arr.Select(a => SchemeCompiler.Compile(VM, a));
             var s = carr.Select(c => VM.Execute(c));
 
             if (s.Count() > 0)
@@ -44,7 +43,7 @@ namespace Scheme.NET.Tests.ProcedureTests
         protected IEnumerable<ISExpression> EvalAll(string input)
         {
             var arr = ParserHelpers.Parse(input);
-            var carr = arr.Select(a => SchemeCompiler.Compile(a));
+            var carr = arr.Select(a => SchemeCompiler.Compile(VM, a));
             var s = carr.Select(c => VM.Execute(c));
             return s;
         }

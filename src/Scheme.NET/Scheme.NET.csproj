@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <PreBuildEvent>java -cp $(MSBuildProjectDirectory)\antlr-4.7-complete.jar org.antlr.v4.Tool $(MSBuildProjectDirectory)\Scheme.g4 -visitor -o $(MSBuildProjectDirectory)\Parser</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.1" />
     <PackageReference Include="Rationals" Version="1.2.1" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Instructions\VirtualMachine\" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
         public override IInstruction Execute(ISchemeVM vm)
         {
-            SetA(vm, Continuation(vm.S));
+            SetA(vm, Continuation(vm.S, vm));
             return Next;
         }
     }

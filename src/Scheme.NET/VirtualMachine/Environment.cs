@@ -69,5 +69,15 @@ namespace Scheme.NET.VirtualMachine
             var s = sym as SymbolAtom;
             Map[s] = new EnvThunk() { Val = val };
         }
+
+        public string String()
+        {
+            return $"#<environment c:{Map.Count}>";
+        }
+
+        public bool Equals(ISExpression other)
+        {
+            return this == other;
+        }
     }
 }

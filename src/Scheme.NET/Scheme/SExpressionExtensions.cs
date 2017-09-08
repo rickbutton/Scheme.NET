@@ -21,6 +21,7 @@ namespace Scheme.NET.Scheme
         public static bool IsCons(this ISExpression sexpr) { return sexpr is Cons; }
         public static bool IsVector(this ISExpression sexpr) { return sexpr is Vector; }
         public static bool IsNil(this ISExpression sexpr) { return sexpr is NilAtom; }
+        public static bool IsEnvironment(this ISExpression sexpr) { return sexpr is VirtualMachine.Environment; }
 
         public static bool IsComplex(this ISExpression sexpr) { return IsNumber(sexpr); }
         public static bool IsReal(this ISExpression sexpr) { return IsComplex(sexpr) && ((NumberAtom)(sexpr)).Val.Imag.IsZero; }

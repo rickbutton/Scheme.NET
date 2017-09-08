@@ -22,20 +22,16 @@ namespace Scheme.NET.VirtualMachine.Instructions
             return new Closure(body, e, args);
         }
 
-        protected ISExpression Continuation(Stack<IFrame> s)
+        protected ISExpression Continuation(Stack<IFrame> s, ISchemeVM vm)
         {
             var v = AtomHelper.SymbolFromString("v");
-            return Closure(new NuateInstruction(s, v), NewEnv(), AtomHelper.CreateList(v));
+            return Closure(new NuateInstruction(s, v), AtomHelper.CreateEnvironment(), 
+                AtomHelper.CreateList(v));
         }
 
         protected IEnvironment Extend(IEnvironment e, IDictionary<SymbolAtom, ISExpression> vars)
         {
             return new Environment(e, vars);
-        }
-
-        protected IEnvironment NewEnv()
-        {
-            return new Environment();
         }
 
         protected void PushFrame(ISchemeVM vm, IInstruction x, IEnvironment e, Stack<ISExpression> r, Stack<IFrame> s)

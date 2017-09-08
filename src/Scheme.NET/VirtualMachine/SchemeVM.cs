@@ -10,15 +10,13 @@ namespace Scheme.NET.VirtualMachine
 {
     public class SchemeVM : ISchemeVM
     {
-        private IDictionary<SymbolAtom, ISExpression> _initial;
-
         public ISExpression A { get; set; }
         public IEnvironment E { get; set; }
         public Stack<ISExpression> R { get; set; }
         public Stack<IFrame> S { get; set; }
 
-        public SchemeVM(IDictionary<SymbolAtom, ISExpression> initial) {
-            _initial = initial;
+        public SchemeVM() {
+            E = new Environment();
             Reset();
         }
 
@@ -30,29 +28,9 @@ namespace Scheme.NET.VirtualMachine
 
             if (env)
             {
-                E = new Environment();
-                PopulateInitialEnvironment();
+                E = AtomHelper.CreateEnvironment();
+                AtomHelper.PopulateEnvironment(E, this);
             }
-        }
-
-        public void PopulateInitialEnvironment()
-        {
-            foreach (var l in _initial)
-                CreatePrimitive(l.Key.Val, (Procedure)l.Value);
-        }
-
-        private void CreatePrimitive(string name, Procedure p)
-        {
-            var def = AtomHelper.CreateList(
-                AtomHelper.SymbolFromString("define"),
-                AtomHelper.SymbolFromString(name),
-                AtomHelper.CreateList(AtomHelper.SymbolFromString("lambda"), AtomHelper.Nil, p)
-                );
-
-            //def = AtomHelper.CreateList(AtomHelper.SymbolFromString("define"), AtomHelper.SymbolFromString(name), p);
-
-            var c = SchemeCompiler.Compile(def);
-            Execute(c);
         }
 
         public ISExpression Execute(IInstruction x)
@@ -62,7 +40,7 @@ namespace Scheme.NET.VirtualMachine
             {
                 while (x != null)
                 {
-                    Console.WriteLine(x.ToString());
+                    //Console.WriteLine(x.ToString());
                     x = x.Execute(this);
                 }
                 success = true;

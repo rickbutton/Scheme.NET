@@ -1,10 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5CB99A27-2E63-4C9E-9866-AE1B3FBC6D5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheme.NET", "src\Scheme.NET\Scheme.NET.csproj", "{5D57952D-981E-4C49-BC98-3A20E07DC216}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheme.NET", "src\Scheme.NET\Scheme.NET.csproj", "{5D57952D-981E-4C49-BC98-3A20E07DC216}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheme.NET.Repl", "src\Scheme.NET.Repl\Scheme.NET.Repl.csproj", "{7B11B275-176B-4EC7-9E2A-B5898AAB643B}"
 EndProject
@@ -64,5 +64,8 @@ Global
 		{5D57952D-981E-4C49-BC98-3A20E07DC216} = {5CB99A27-2E63-4C9E-9866-AE1B3FBC6D5C}
 		{7B11B275-176B-4EC7-9E2A-B5898AAB643B} = {5CB99A27-2E63-4C9E-9866-AE1B3FBC6D5C}
 		{9153593C-2CD3-4FF5-93A0-3A6DB52AB28A} = {5CB99A27-2E63-4C9E-9866-AE1B3FBC6D5C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DEE099B9-077D-4234-AA5B-B1FDB65D0D3C}
 	EndGlobalSection
 EndGlobal

@@ -72,11 +72,10 @@ namespace Scheme.NET.VirtualMachine.Natives
             AddFunction(dict, "set-car!", Pairs.SetCar);
             AddFunction(dict, "set-cdr!", Pairs.SetCdr);
 
-            /*AddPrimitive(dict, "quote", Primitives.Quote);
-            AddPrimitive(dict, "lambda", Primitives.Lambda);
-            AddPrimitive(dict, "define", Primitives.Define);
-            AddPrimitive(dict, "if", Primitives.If);
-            AddPrimitive(dict, "set!", Primitives.Set);*/
+            AddFunction(dict, "display", IO.Display);
+            AddFunction(dict, "read", IO.Read);
+
+            AddFunction(dict, "eval", Eval.Evaluate);
 
             return dict;
         }

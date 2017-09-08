@@ -8,6 +8,10 @@ using System.Text.RegularExpressions;
 using System.Numerics;
 using Complex = Scheme.NET.Numbers.Complex;
 using System.Linq.Expressions;
+using Scheme.NET.VirtualMachine;
+using Scheme.NET.VirtualMachine.Compiler;
+using Scheme.NET.VirtualMachine.Natives;
+using Scheme.NET.VirtualMachine.Instructions;
 
 namespace Scheme.NET.Scheme
 {
@@ -207,6 +211,34 @@ namespace Scheme.NET.Scheme
                 head = CreateCons(exprs[i], head);
             }
             return head;
+        }
+
+
+        public static IEnvironment CreateEnvironment()
+        {
+            return new VirtualMachine.Environment();
+        }
+
+        public static void PopulateEnvironment(IEnvironment e, ISchemeVM vm)
+        {
+            var lib = Library.CreateBase();
+            foreach (var l in lib)
+                CreatePrimitive(l.Key.Val, (Procedure)l.Value, e, vm);
+        }
+
+        private static void CreatePrimitive(string name, Procedure p, IEnvironment e, ISchemeVM vm)
+        {
+            var def = AtomHelper.CreateList(
+                            AtomHelper.SymbolFromString("define"),
+                AtomHelper.SymbolFromString(name),
+                AtomHelper.CreateList(AtomHelper.SymbolFromString("lambda"), AtomHelper.Nil, p)
+                );
+            var inst = SchemeCompiler.Compile(vm, def);
+
+            var tmp = vm.E;
+            vm.E = e;
+            vm.Execute(inst);
+            vm.E = tmp;
         }
 
         public static readonly NilAtom Nil = new NilAtom();

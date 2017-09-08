@@ -20,11 +20,11 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
         public override IInstruction Execute(ISchemeVM vm)
         {
-            if (vm.A == AtomHelper.True)
+            if (vm.A == AtomHelper.False)
             {
-                return Then;
+                return Else;
             }
-            return Else;
+            return Then;
         }
     }
 }

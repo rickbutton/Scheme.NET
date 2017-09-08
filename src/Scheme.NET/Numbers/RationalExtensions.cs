@@ -82,7 +82,7 @@ namespace Scheme.NET.Numbers
         {
             if (a.Denominator == 0)
                 return 0;
-            if (a.Denominator != 1 || b.Denominator != 1)
+            if (a.FractionPart != Rational.Zero || b.FractionPart != Rational.Zero)
                 throw new InvalidOperationException("Can't perform modulo of non-integers.");
 
             return a.Numerator % b.Numerator;
@@ -115,9 +115,9 @@ namespace Scheme.NET.Numbers
             var sign = r.Sign > 0 ? (forceSign ? "+" : "") : "-";
 
             if (r.IsZero) return "0";
-            if (r.Denominator == 1)
+            if (r.FractionPart == Rational.Zero)
             {
-                return $"{sign}{BigInteger.Abs(r.Numerator).ToString(radix)}";
+                return $"{sign}{BigInteger.Abs(r.CanonicalForm.Numerator).ToString(radix)}";
             }
             return $"{sign}{BigInteger.Abs(r.Numerator).ToString(radix)}/{BigInteger.Abs(r.Denominator).ToString(radix)}";
         }

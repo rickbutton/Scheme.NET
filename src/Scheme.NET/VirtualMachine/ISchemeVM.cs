@@ -13,8 +13,5 @@ namespace Scheme.NET.VirtualMachine
         Stack<ISExpression> R { get; set; }
         Stack<IFrame> S { get; set; }
         ISExpression Execute(IInstruction x);
-        void PopulateInitialEnvironment();
-
-        
     }
 }

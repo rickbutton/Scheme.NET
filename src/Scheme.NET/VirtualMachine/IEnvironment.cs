@@ -6,7 +6,7 @@ using static Scheme.NET.VirtualMachine.Environment;
 
 namespace Scheme.NET.VirtualMachine
 {
-    public interface IEnvironment
+    public interface IEnvironment : ISExpression
     {
         IDictionary<SymbolAtom, EnvThunk> Map { get; }
         ISExpression Lookup(ISExpression sym);

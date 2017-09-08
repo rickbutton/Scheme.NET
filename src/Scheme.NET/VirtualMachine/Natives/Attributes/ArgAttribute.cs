@@ -142,4 +142,9 @@ namespace Scheme.NET.VirtualMachine.Natives.Attributes
     {
         public SymbolAttribute(int i) : base("symbol", "non-symbol", (a) => a.IsSymbol(), i) { }
     }
+
+    public class EnvironmentAttribute : PredicateAttribute
+    {
+        public EnvironmentAttribute(int i) : base("environment", "non-environment", (a) => a.IsEnvironment(), i) { }
+    }
 }

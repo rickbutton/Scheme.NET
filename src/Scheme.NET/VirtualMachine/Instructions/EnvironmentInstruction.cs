@@ -8,7 +8,6 @@ namespace Scheme.NET.VirtualMachine.Instructions
     public class EnvironmentInstruction : InstructionBase
     {
         public override string Name => "environment";
-
         public bool Populate { get; private set; }
         public IInstruction Next { get; private set; }
 
@@ -20,11 +19,12 @@ namespace Scheme.NET.VirtualMachine.Instructions
 
         public override IInstruction Execute(ISchemeVM vm)
         {
-            SetE(vm, NewEnv());
+            var e = AtomHelper.CreateEnvironment();
 
             if (Populate)
-                vm.PopulateInitialEnvironment();
+                AtomHelper.PopulateEnvironment(e, vm);
 
+            SetA(vm, e);
             return Next;
         }
     }
