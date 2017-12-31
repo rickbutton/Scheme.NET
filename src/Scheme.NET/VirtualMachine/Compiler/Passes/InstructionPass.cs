@@ -3,6 +3,7 @@ using Scheme.NET.Scheme;
 using Scheme.NET.VirtualMachine.Instructions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Scheme.NET.VirtualMachine.Compiler.Passes
@@ -126,6 +127,8 @@ namespace Scheme.NET.VirtualMachine.Compiler.Passes
                 var set_v = x.Get(1);
                 var set_expr = x.Get(2);
 
+                CheckNotIllegalSymbol(set_v);
+
                 return Compile(vm, set_expr, new AssignInstruction(set_v, next));
             }
             else if (op == CompilerConstants.Define)
@@ -134,6 +137,8 @@ namespace Scheme.NET.VirtualMachine.Compiler.Passes
                     ThrowErr("define", "invalid number of arguments", x.String());
 
                 var def_v = x.Get(1);
+
+                CheckNotIllegalSymbol(def_v);
 
                 if (def_v.IsSymbol())
                 {

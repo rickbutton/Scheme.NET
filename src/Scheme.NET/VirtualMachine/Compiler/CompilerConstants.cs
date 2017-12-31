@@ -20,5 +20,12 @@ namespace Scheme.NET.VirtualMachine.Compiler
 
         public static readonly ISExpression SchemeReportEnvironment = AtomHelper.SymbolFromString("scheme-report-environment");
         public static readonly ISExpression NullEnvironment = AtomHelper.SymbolFromString("null-environment");
+
+        public static readonly ISExpression[] IllegalVariables = new ISExpression[]
+        {
+            CompilerConstants.Quote, CompilerConstants.Let, CompilerConstants.LetStar, CompilerConstants.Lambda,
+            CompilerConstants.If, CompilerConstants.SetBang, CompilerConstants.Define, CompilerConstants.CallCC,
+            CompilerConstants.Begin, CompilerConstants.SchemeReportEnvironment, CompilerConstants.NullEnvironment
+        };
     }
 }
